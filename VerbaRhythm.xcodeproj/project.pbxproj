@@ -1,0 +1,784 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B659B7DE2C6C6F760045D535 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B7DD2C6C6F760045D535 /* ShareViewController.swift */; };
+		B659B7E12C6C6F760045D535 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = B659B7E02C6C6F760045D535 /* Base */; };
+		B659B7E52C6C6F760045D535 /* VerbaRhythmShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B659B7DB2C6C6F760045D535 /* VerbaRhythmShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B659B8072C705E0E0045D535 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B659B7F12C6FE19D0045D535 /* UniformTypeIdentifiers.framework */; };
+		B659B80A2C705E0E0045D535 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B659B8092C705E0E0045D535 /* Media.xcassets */; };
+		B659B80C2C705E0E0045D535 /* ActionRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B80B2C705E0E0045D535 /* ActionRequestHandler.swift */; };
+		B659B80E2C705E0E0045D535 /* Action.js in Resources */ = {isa = PBXBuildFile; fileRef = B659B80D2C705E0E0045D535 /* Action.js */; };
+		B659B8122C705E0E0045D535 /* VerbaRhythmActionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B659B8062C705E0E0045D535 /* VerbaRhythmActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B659B81A2C72F6960045D535 /* HistoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B8192C72F6960045D535 /* HistoryEntry.swift */; };
+		B659B81C2C72F6B50045D535 /* HistoryGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B81B2C72F6B50045D535 /* HistoryGroup.swift */; };
+		B659B81E2C72F7110045D535 /* DeleteAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B81D2C72F7110045D535 /* DeleteAction.swift */; };
+		B659B8202C72F88A0045D535 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B81F2C72F88A0045D535 /* ContentViewModel.swift */; };
+		B659B8222C72F9780045D535 /* WordDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B8212C72F9780045D535 /* WordDisplayView.swift */; };
+		B659B8242C72F9B60045D535 /* TextEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B8232C72F9B60045D535 /* TextEntryView.swift */; };
+		B659B8262C72F9D10045D535 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B8252C72F9D10045D535 /* ToolbarView.swift */; };
+		B659B8282C72FB9F0045D535 /* SidePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B8272C72FB9F0045D535 /* SidePanelView.swift */; };
+		B659B82A2C72FCD30045D535 /* PlaybackControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B8292C72FCD30045D535 /* PlaybackControlsView.swift */; };
+		B659B82D2C7303A80045D535 /* SidePanelViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B659B82C2C7303A80045D535 /* SidePanelViewModifier.swift */; };
+		B680391F2ABD4A21007DB065 /* VerbaRhythmApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B680391E2ABD4A21007DB065 /* VerbaRhythmApp.swift */; };
+		B68039232ABD4A22007DB065 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B68039222ABD4A22007DB065 /* Assets.xcassets */; };
+		B68039272ABD4A22007DB065 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B68039262ABD4A22007DB065 /* Preview Assets.xcassets */; };
+		B68FA70D2ABD509F0005F1DA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FA70C2ABD509F0005F1DA /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B659B7E32C6C6F760045D535 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B68039132ABD4A21007DB065 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B659B7DA2C6C6F760045D535;
+			remoteInfo = VerbarhythmShare;
+		};
+		B659B8102C705E0E0045D535 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B68039132ABD4A21007DB065 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B659B8052C705E0E0045D535;
+			remoteInfo = VerbarhythmActionExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B659B7E62C6C6F760045D535 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B659B8122C705E0E0045D535 /* VerbaRhythmActionExtension.appex in Embed Foundation Extensions */,
+				B659B7E52C6C6F760045D535 /* VerbaRhythmShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B659B7DB2C6C6F760045D535 /* VerbaRhythmShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VerbaRhythmShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B659B7DD2C6C6F760045D535 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		B659B7E02C6C6F760045D535 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		B659B7E22C6C6F760045D535 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B659B7EA2C6C7A240045D535 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B659B7F12C6FE19D0045D535 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
+		B659B8062C705E0E0045D535 /* VerbaRhythmActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VerbaRhythmActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B659B8092C705E0E0045D535 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		B659B80B2C705E0E0045D535 /* ActionRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRequestHandler.swift; sourceTree = "<group>"; };
+		B659B80D2C705E0E0045D535 /* Action.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Action.js; sourceTree = "<group>"; };
+		B659B80F2C705E0E0045D535 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B659B8192C72F6960045D535 /* HistoryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryEntry.swift; sourceTree = "<group>"; };
+		B659B81B2C72F6B50045D535 /* HistoryGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryGroup.swift; sourceTree = "<group>"; };
+		B659B81D2C72F7110045D535 /* DeleteAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAction.swift; sourceTree = "<group>"; };
+		B659B81F2C72F88A0045D535 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		B659B8212C72F9780045D535 /* WordDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDisplayView.swift; sourceTree = "<group>"; };
+		B659B8232C72F9B60045D535 /* TextEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryView.swift; sourceTree = "<group>"; };
+		B659B8252C72F9D10045D535 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		B659B8272C72FB9F0045D535 /* SidePanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidePanelView.swift; sourceTree = "<group>"; };
+		B659B8292C72FCD30045D535 /* PlaybackControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackControlsView.swift; sourceTree = "<group>"; };
+		B659B82C2C7303A80045D535 /* SidePanelViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidePanelViewModifier.swift; sourceTree = "<group>"; };
+		B680391B2ABD4A21007DB065 /* VerbaRhythm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VerbaRhythm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B680391E2ABD4A21007DB065 /* VerbaRhythmApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerbaRhythmApp.swift; sourceTree = "<group>"; };
+		B68039222ABD4A22007DB065 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B68039242ABD4A22007DB065 /* verbarhythm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = verbarhythm.entitlements; sourceTree = "<group>"; };
+		B68039262ABD4A22007DB065 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B68FA70C2ABD509F0005F1DA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B659B7D82C6C6F760045D535 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B659B8032C705E0E0045D535 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B659B8072C705E0E0045D535 /* UniformTypeIdentifiers.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B68039182ABD4A21007DB065 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B659B7DC2C6C6F760045D535 /* VerbaRhythmShare */ = {
+			isa = PBXGroup;
+			children = (
+				B659B7DD2C6C6F760045D535 /* ShareViewController.swift */,
+				B659B7DF2C6C6F760045D535 /* MainInterface.storyboard */,
+				B659B7E22C6C6F760045D535 /* Info.plist */,
+			);
+			path = VerbaRhythmShare;
+			sourceTree = "<group>";
+		};
+		B659B7F02C6FE19D0045D535 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B659B7F12C6FE19D0045D535 /* UniformTypeIdentifiers.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B659B8082C705E0E0045D535 /* VerbaRhythmActionExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B659B8092C705E0E0045D535 /* Media.xcassets */,
+				B659B80B2C705E0E0045D535 /* ActionRequestHandler.swift */,
+				B659B80D2C705E0E0045D535 /* Action.js */,
+				B659B80F2C705E0E0045D535 /* Info.plist */,
+			);
+			path = VerbaRhythmActionExtension;
+			sourceTree = "<group>";
+		};
+		B659B8162C72F5F60045D535 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B659B8192C72F6960045D535 /* HistoryEntry.swift */,
+				B659B81B2C72F6B50045D535 /* HistoryGroup.swift */,
+				B659B81D2C72F7110045D535 /* DeleteAction.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B659B8172C72F5FF0045D535 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B659B8212C72F9780045D535 /* WordDisplayView.swift */,
+				B659B8232C72F9B60045D535 /* TextEntryView.swift */,
+				B659B8252C72F9D10045D535 /* ToolbarView.swift */,
+				B659B8272C72FB9F0045D535 /* SidePanelView.swift */,
+				B659B8292C72FCD30045D535 /* PlaybackControlsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B659B8182C72F61E0045D535 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B659B81F2C72F88A0045D535 /* ContentViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		B659B82B2C7303830045D535 /* ViewModifiers */ = {
+			isa = PBXGroup;
+			children = (
+				B659B82C2C7303A80045D535 /* SidePanelViewModifier.swift */,
+			);
+			path = ViewModifiers;
+			sourceTree = "<group>";
+		};
+		B68039122ABD4A21007DB065 = {
+			isa = PBXGroup;
+			children = (
+				B680391D2ABD4A21007DB065 /* VerbaRhythm */,
+				B659B7DC2C6C6F760045D535 /* VerbaRhythmShare */,
+				B659B8082C705E0E0045D535 /* VerbaRhythmActionExtension */,
+				B659B7F02C6FE19D0045D535 /* Frameworks */,
+				B680391C2ABD4A21007DB065 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B680391C2ABD4A21007DB065 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B680391B2ABD4A21007DB065 /* VerbaRhythm.app */,
+				B659B7DB2C6C6F760045D535 /* VerbaRhythmShare.appex */,
+				B659B8062C705E0E0045D535 /* VerbaRhythmActionExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B680391D2ABD4A21007DB065 /* VerbaRhythm */ = {
+			isa = PBXGroup;
+			children = (
+				B659B8162C72F5F60045D535 /* Models */,
+				B659B8182C72F61E0045D535 /* ViewModels */,
+				B659B82B2C7303830045D535 /* ViewModifiers */,
+				B659B8172C72F5FF0045D535 /* Views */,
+				B659B7EA2C6C7A240045D535 /* Info.plist */,
+				B680391E2ABD4A21007DB065 /* VerbaRhythmApp.swift */,
+				B68FA70C2ABD509F0005F1DA /* ContentView.swift */,
+				B68039222ABD4A22007DB065 /* Assets.xcassets */,
+				B68039242ABD4A22007DB065 /* verbarhythm.entitlements */,
+				B68039252ABD4A22007DB065 /* Preview Content */,
+			);
+			path = VerbaRhythm;
+			sourceTree = "<group>";
+		};
+		B68039252ABD4A22007DB065 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				B68039262ABD4A22007DB065 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B659B7DA2C6C6F760045D535 /* VerbaRhythmShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B659B7E92C6C6F760045D535 /* Build configuration list for PBXNativeTarget "VerbaRhythmShare" */;
+			buildPhases = (
+				B659B7D72C6C6F760045D535 /* Sources */,
+				B659B7D82C6C6F760045D535 /* Frameworks */,
+				B659B7D92C6C6F760045D535 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VerbaRhythmShare;
+			productName = VerbarhythmShare;
+			productReference = B659B7DB2C6C6F760045D535 /* VerbaRhythmShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B659B8052C705E0E0045D535 /* VerbaRhythmActionExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B659B8132C705E0E0045D535 /* Build configuration list for PBXNativeTarget "VerbaRhythmActionExtension" */;
+			buildPhases = (
+				B659B8022C705E0E0045D535 /* Sources */,
+				B659B8032C705E0E0045D535 /* Frameworks */,
+				B659B8042C705E0E0045D535 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VerbaRhythmActionExtension;
+			productName = VerbarhythmActionExtension;
+			productReference = B659B8062C705E0E0045D535 /* VerbaRhythmActionExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B680391A2ABD4A21007DB065 /* VerbaRhythm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B680392A2ABD4A22007DB065 /* Build configuration list for PBXNativeTarget "VerbaRhythm" */;
+			buildPhases = (
+				B68039172ABD4A21007DB065 /* Sources */,
+				B68039182ABD4A21007DB065 /* Frameworks */,
+				B68039192ABD4A21007DB065 /* Resources */,
+				B659B7E62C6C6F760045D535 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B659B7E42C6C6F760045D535 /* PBXTargetDependency */,
+				B659B8112C705E0E0045D535 /* PBXTargetDependency */,
+			);
+			name = VerbaRhythm;
+			productName = verbarhythm;
+			productReference = B680391B2ABD4A21007DB065 /* VerbaRhythm.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B68039132ABD4A21007DB065 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					B659B7DA2C6C6F760045D535 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					B659B8052C705E0E0045D535 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					B680391A2ABD4A21007DB065 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+				};
+			};
+			buildConfigurationList = B68039162ABD4A21007DB065 /* Build configuration list for PBXProject "VerbaRhythm" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B68039122ABD4A21007DB065;
+			productRefGroup = B680391C2ABD4A21007DB065 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B680391A2ABD4A21007DB065 /* VerbaRhythm */,
+				B659B7DA2C6C6F760045D535 /* VerbaRhythmShare */,
+				B659B8052C705E0E0045D535 /* VerbaRhythmActionExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B659B7D92C6C6F760045D535 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B659B7E12C6C6F760045D535 /* Base in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B659B8042C705E0E0045D535 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B659B80E2C705E0E0045D535 /* Action.js in Resources */,
+				B659B80A2C705E0E0045D535 /* Media.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B68039192ABD4A21007DB065 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B68039272ABD4A22007DB065 /* Preview Assets.xcassets in Resources */,
+				B68039232ABD4A22007DB065 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B659B7D72C6C6F760045D535 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B659B7DE2C6C6F760045D535 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B659B8022C705E0E0045D535 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B659B80C2C705E0E0045D535 /* ActionRequestHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B68039172ABD4A21007DB065 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B659B82A2C72FCD30045D535 /* PlaybackControlsView.swift in Sources */,
+				B659B8242C72F9B60045D535 /* TextEntryView.swift in Sources */,
+				B659B81C2C72F6B50045D535 /* HistoryGroup.swift in Sources */,
+				B659B8262C72F9D10045D535 /* ToolbarView.swift in Sources */,
+				B659B81A2C72F6960045D535 /* HistoryEntry.swift in Sources */,
+				B659B8282C72FB9F0045D535 /* SidePanelView.swift in Sources */,
+				B659B8202C72F88A0045D535 /* ContentViewModel.swift in Sources */,
+				B68FA70D2ABD509F0005F1DA /* ContentView.swift in Sources */,
+				B680391F2ABD4A21007DB065 /* VerbaRhythmApp.swift in Sources */,
+				B659B82D2C7303A80045D535 /* SidePanelViewModifier.swift in Sources */,
+				B659B81E2C72F7110045D535 /* DeleteAction.swift in Sources */,
+				B659B8222C72F9780045D535 /* WordDisplayView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B659B7E42C6C6F760045D535 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B659B7DA2C6C6F760045D535 /* VerbaRhythmShare */;
+			targetProxy = B659B7E32C6C6F760045D535 /* PBXContainerItemProxy */;
+		};
+		B659B8112C705E0E0045D535 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B659B8052C705E0E0045D535 /* VerbaRhythmActionExtension */;
+			targetProxy = B659B8102C705E0E0045D535 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B659B7DF2C6C6F760045D535 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B659B7E02C6C6F760045D535 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B659B7E72C6C6F760045D535 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9VS2VKC5LQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VerbarhythmShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = VerbarhythmShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.austincondiff.verbarhythm.VerbaRhythmShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B659B7E82C6C6F760045D535 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9VS2VKC5LQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VerbarhythmShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = VerbarhythmShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.austincondiff.verbarhythm.VerbaRhythmShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B659B8142C705E0E0045D535 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9VS2VKC5LQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VerbarhythmActionExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = VerbarhythmActionExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.austincondiff.verbarhythm.VerbaRhythmActionExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B659B8152C705E0E0045D535 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9VS2VKC5LQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VerbarhythmActionExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = VerbarhythmActionExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.austincondiff.verbarhythm.VerbaRhythmActionExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B68039282ABD4A22007DB065 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B68039292ABD4A22007DB065 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		B680392B2ABD4A22007DB065 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = verbarhythm/verbarhythm.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"verbarhythm/Preview Content\"";
+				DEVELOPMENT_TEAM = 9VS2VKC5LQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Verbarhythm/Info.plist;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.austincondiff.verbarhythm;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B680392C2ABD4A22007DB065 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = verbarhythm/verbarhythm.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"verbarhythm/Preview Content\"";
+				DEVELOPMENT_TEAM = 9VS2VKC5LQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Verbarhythm/Info.plist;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.austincondiff.verbarhythm;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B659B7E92C6C6F760045D535 /* Build configuration list for PBXNativeTarget "VerbaRhythmShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B659B7E72C6C6F760045D535 /* Debug */,
+				B659B7E82C6C6F760045D535 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B659B8132C705E0E0045D535 /* Build configuration list for PBXNativeTarget "VerbaRhythmActionExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B659B8142C705E0E0045D535 /* Debug */,
+				B659B8152C705E0E0045D535 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B68039162ABD4A21007DB065 /* Build configuration list for PBXProject "VerbaRhythm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B68039282ABD4A22007DB065 /* Debug */,
+				B68039292ABD4A22007DB065 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B680392A2ABD4A22007DB065 /* Build configuration list for PBXNativeTarget "VerbaRhythm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B680392B2ABD4A22007DB065 /* Debug */,
+				B680392C2ABD4A22007DB065 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B68039132ABD4A21007DB065 /* Project object */;
+}
