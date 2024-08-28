@@ -8,20 +8,29 @@
 import SwiftUI
 
 struct SidePanelModifier<PanelContent: View>: ViewModifier {
-    @Binding var isPresented: Bool {
-        didSet {
-            dragOffset = 0
-        }
-    }
+    @Binding var isPresented: Bool
 
     let panelContent: () -> PanelContent
 
     @State private var dragOffset: CGFloat = 0
 
+    @State private var sidePanelIsPresented = false
+
+    private let sidePanelInset: CGFloat = 64
+
     func body(content: Content) -> some View {
         GeometryReader { proxy in
+            let sidePanelWidth = proxy.size.width - sidePanelInset
+
             content
                 .opacity(calculateContentOpacity(proxy: proxy))
+                .gesture(
+                    sidePanelIsPresented ? TapGesture().onEnded {
+                        withAnimation {
+                            sidePanelIsPresented = false
+                        }
+                    } : nil
+                )
                 .background(alignment: .leading) {
                     panelContent()
                         .padding(.trailing, 64)
@@ -43,51 +52,53 @@ struct SidePanelModifier<PanelContent: View>: ViewModifier {
                                 )
                                 .ignoresSafeArea()
                                 .blendMode(.destinationOut)
-                                .offset(x: max(0, proxy.size.width - 64))
+                                .offset(x: max(0, sidePanelWidth))
                             }
                             .compositingGroup()
                         )
-                        .offset(x: -proxy.size.width + 64)
+                        .offset(x: -sidePanelWidth)
                 }
-                .gesture(
-                    isPresented ? TapGesture().onEnded {
-                        isPresented = false
-                    } : nil
-                )
+
                 .offset(x: calculatePanelOffset(proxy: proxy))
                 .gesture(dragGesture(proxy: proxy))
-                .animation(.easeInOut, value: isPresented)
+                .onChange(of: isPresented) { newValue in
+                    withAnimation {
+                        dragOffset = 0
+                        sidePanelIsPresented = newValue
+                    }
+                }
+                .onChange(of: sidePanelIsPresented) { newValue in
+                    if newValue != isPresented {
+                        isPresented = newValue
+                    }
+                }
         }
     }
 
     private func dragGesture(proxy: GeometryProxy) -> some Gesture {
         DragGesture()
             .onChanged { value in
-                let sidePanelWidth = proxy.size.width - 64
+                let sidePanelWidth = proxy.size.width - sidePanelInset
 
-//                if isPlaying {
-//                    pause()
-//                }
-
-                if isPresented {
+                if sidePanelIsPresented {
                     dragOffset = max(1, min(sidePanelWidth, sidePanelWidth + value.translation.width))
                 } else {
                     dragOffset = min(max(0, value.translation.width), sidePanelWidth)
                 }
             }
             .onEnded { value in
-                let sidePanelWidth = proxy.size.width - 64
+                let sidePanelWidth = proxy.size.width - sidePanelInset
                 let threshold = sidePanelWidth / 2
 
-                if (!isPresented && value.translation.width > threshold) 
-                    || (isPresented && value.translation.width > -threshold) {
+                if (!sidePanelIsPresented && value.translation.width > threshold)
+                    || (sidePanelIsPresented && value.translation.width > -threshold) {
                     withAnimation {
-                        isPresented = true
+                        sidePanelIsPresented = true
+                        dragOffset = sidePanelWidth
                     }
-                    dragOffset = sidePanelWidth
                 } else {
                     withAnimation {
-                        isPresented = false
+                        sidePanelIsPresented = false
                         dragOffset = 0
                     }
                 }
@@ -95,9 +106,9 @@ struct SidePanelModifier<PanelContent: View>: ViewModifier {
     }
 
     private func calculateContentOpacity(proxy: GeometryProxy) -> Double {
-        let sidePanelWidth = proxy.size.width - 64
+        let sidePanelWidth = proxy.size.width - sidePanelInset
 
-        if isPresented {
+        if sidePanelIsPresented {
             return dragOffset == 0
                 ? 0.5
                 : 1 - (min(max(0, dragOffset), sidePanelWidth) / (sidePanelWidth) * 0.5)
@@ -107,9 +118,9 @@ struct SidePanelModifier<PanelContent: View>: ViewModifier {
     }
 
     private func calculatePanelOffset(proxy: GeometryProxy) -> CGFloat {
-        let sidePanelWidth = proxy.size.width - 64
+        let sidePanelWidth = proxy.size.width - sidePanelInset
 
-        if isPresented {
+        if sidePanelIsPresented {
             return dragOffset == 0 ? sidePanelWidth : dragOffset
         }
 

@@ -23,9 +23,10 @@ struct SidePanelView: View {
                 }
                 .foregroundStyle(.secondary)
                 Spacer()
-
             } else {
+
                 List(selection: $viewModel.selectedHistoryEntries) {
+#if os(iOS)
                     ForEach(HistoryGroup.allCases, id: \.self) { group in
                         if let entries = viewModel.groupedHistory[group], !entries.isEmpty {
                             Section(header: Text(group.rawValue)) {
@@ -58,16 +59,18 @@ struct SidePanelView: View {
                             }
                         }
                     }
+                    #else
+                    EmptyView()
+                    #endif
                 }
+#if os(iOS)
                 .environment(\.editMode, .constant(viewModel.editingHistory ? .active : .inactive))
                 .listStyle(.inset)
                 .scrollContentBackground(.hidden)
                 .safeAreaInset(edge: .top, spacing: 0) {
                     HStack(spacing: 28) {
                         Button {
-                            withAnimation {
-                                viewModel.drawerIsPresented.toggle()
-                            }
+                            viewModel.drawerIsPresented.toggle()
                         } label: {
                             Label(
                                 "Toggle Drawer",
@@ -122,6 +125,7 @@ struct SidePanelView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
+#endif
                 .confirmationDialog(
                     "Delete Confirmation",
                     isPresented: $viewModel.showDeleteConfirmation,

@@ -78,7 +78,7 @@ struct PlaybackControlsView: View {
                     .keyboardShortcut(.space, modifiers: [])
                 }
                 Group {
-                    if #available(iOS 17, *) {
+                    if #available(iOS 17, macOS 14, *) {
                         Image(systemName: viewModel.isPlaying ? "pause.fill" : viewModel.words.count > 1 && viewModel.atEnd() ? "arrow.counterclockwise" : "play.fill")
                             .contentTransition(.symbolEffect(.replace))
                     } else {
@@ -87,7 +87,9 @@ struct PlaybackControlsView: View {
                 }
                 .font(.system(size: 24))
                 .frame(height: 20)
+                #if os(iOS)
                 .foregroundStyle(viewModel.words.isEmpty ? Color(.quaternaryLabel) : viewModel.isPlaying ? Color(.tintColor) : Color(.white))
+                #endif
             }
 
             Button {

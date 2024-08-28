@@ -7,12 +7,115 @@
 
 
 import SwiftUI
+import Combine
+
+enum TextStyle: String, CaseIterable {
+    case sansSerif = "Sans Serif"
+    case serif = "Serif"
+    case monospaced = "Monospaced"
+    case rounded = "Rounded"
+
+    func toFont(size: CGFloat, weight: TextWeight, width: TextWidth) -> Font {
+        switch self {
+        case .sansSerif:
+            return .system(size: size, weight: weight.toFontWeight(), design: .default).width(width.toFontWidth())
+        case .serif:
+            return .system(size: size, weight: weight.toFontWeight(), design: .serif).width(width.toFontWidth())
+        case .monospaced:
+            return .system(size: size, weight: weight.toFontWeight(), design: .monospaced).width(width.toFontWidth())
+        case .rounded:
+            return .system(size: size, weight: weight.toFontWeight(), design: .rounded).width(width.toFontWidth())
+        }
+    }
+}
+
+enum TextSize: String, CaseIterable {
+    case xs = "Extra Small"
+    case sm = "Small"
+    case md = "Medium"
+    case lg = "Large"
+    case xl = "Extra Large"
+
+    func toSize() -> CGFloat {
+        switch self {
+        case .xs:
+            return 20
+        case .sm:
+            return 28
+        case .md:
+            return 34
+        case .lg:
+            return 40
+        case .xl:
+            return 48
+        }
+    }
+}
+
+enum TextWeight: String, CaseIterable {
+    case ultraLight = "Ultra Light"
+    case thin = "Thin"
+    case light = "Light"
+    case regular = "Regular"
+    case medium = "Medium"
+    case semibold = "Semibold"
+    case bold = "Bold"
+    case heavy = "Heavy"
+    case black = "Black"
+
+    func toFontWeight() -> Font.Weight {
+        switch self {
+        case .ultraLight:
+            return .ultraLight
+        case .thin:
+            return .thin
+        case .light:
+            return .light
+        case .regular:
+            return .regular
+        case .medium:
+            return .medium
+        case .semibold:
+            return .semibold
+        case .bold:
+            return .bold
+        case .heavy:
+            return .heavy
+        case .black:
+            return .black
+        }
+    }
+}
+
+enum TextWidth: String, CaseIterable {
+    case compressed = "Compressed"
+    case condensed = "Condensed"
+    case standard = "Standard"
+    case expanded = "Expanded"
+
+    func toFontWidth() -> Font.Width {
+        switch self {
+        case .compressed:
+            return .compressed
+        case .condensed:
+            return .condensed
+        case .standard:
+            return .standard
+        case .expanded:
+            return .expanded
+        }
+    }
+}
+
 
 class ContentViewModel: ObservableObject {
     @Published var focusedField: Bool = false {
         didSet {
             if (!focusedField && !phraseText.isEmpty && phraseText != lastSavedEntry?.text) {
                 saveHistoryEntry()
+            }
+            if focusedField && isPlaying {
+                pause()
             }
         }
     }
@@ -27,6 +130,9 @@ class ContentViewModel: ObservableObject {
     @Published var isPlaying = false {
         didSet {
             editing = false
+            if isPlaying {
+                focusedField = false
+            }
         }
     }
     @Published var temporaryPause = false
@@ -35,13 +141,19 @@ class ContentViewModel: ObservableObject {
     @Published var prevWordSize: CGSize = CGSize(width: 0, height: 0)
     @Published var currentWordSize: CGSize = CGSize(width: 0, height: 0)
     @Published var nextWordSize: CGSize = CGSize(width: 0, height: 0)
-    @Published var showGhostText: Bool = true
+
+    @Published var history: [HistoryEntry] = []
+
     @Published var editingHistory: Bool = false
     @Published var selectedHistoryEntries = Set<HistoryEntry>()
     @Published var isFullScreen: Bool = false
     @Published var drawerIsPresented: Bool = false {
         didSet {
-            focusedField = false
+            print("ContentViewModel drawerIsPresented: \(drawerIsPresented)")
+            if drawerIsPresented {
+                focusedField = false
+                settingsSheetIsPresented = false
+            }
             if isPlaying {
                 pause()
             }
@@ -49,16 +161,57 @@ class ContentViewModel: ObservableObject {
     }
     @Published var dragOffset: CGFloat = 0
     @Published var words: [String.SubSequence] = []
-    @Published var history: [HistoryEntry] = []
     @Published var lastSavedEntry: HistoryEntry? = nil
-    @Published var isDynamicSpeedOn: Bool = true
-    @Published var speedMultiplier: Double = 1.0
-    @Published var fontSizeMultiplier: Double = 1.0
+
     @Published var ghostWordCount: Int = 5;
     @Published var showDeleteConfirmation = false
     @Published var deleteAction: DeleteAction? = nil
+    @Published var scrollViewHeight: CGFloat = 0
+    @Published var scrollContentHeight: CGFloat = 0
+    @Published var scrollViewProxy: ScrollViewProxy? = nil
+    @Published var settingsSheetIsPresented: Bool = false {
+        didSet {
+            if settingsSheetIsPresented {
+                drawerIsPresented = false
+                focusedField = false
+            }
+        }
+    }
+    @Published var sheetHeight: CGFloat = .zero
 
-    let speedOptions: [Double] = Array(stride(from: 0.25, through: 2.0, by: 0.25))
+    @Published var isKeyboardVisible: Bool = false
+
+    @Published var settingsResetConfirmationIsPresented: Bool = false
+
+    private var cancellables = Set<AnyCancellable>()
+
+    let settings: SettingsViewModel
+
+    init(settings: SettingsViewModel = SettingsViewModel()) {
+        self.settings = settings
+
+        #if os(iOS)
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+            .sink { [weak self] _ in
+                self?.isKeyboardVisible = true
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+            .sink { [weak self] _ in
+                self?.isKeyboardVisible = false
+            }
+            .store(in: &cancellables)
+        #endif
+    }
+
+    var characterIndexForCurrentWord: Int {
+        let words = phraseText.split(separator: " ")
+        let range = words.prefix(currentIndex).joined(separator: " ").count
+        return range + (currentIndex > 0 ? currentIndex : 0) // Adding spaces
+    }
+
+    let speedOptions: [Double] = Array(stride(from: 0.25, through: 3.0, by: 0.25))
 
     func onPhraseTextChange() {
         words = phraseText.split(separator: Regex(/[ \t\n—]/))
@@ -109,17 +262,17 @@ class ContentViewModel: ObservableObject {
         let punctuation = word.last
         var interval: Double = 0.15 * max(Double(word.count), 2)
 
-        if isDynamicSpeedOn {
+        if settings.isDynamicSpeedOn {
             if punctuation == "," {
-                interval += 1
-            } else if punctuation == "." || punctuation == ";" || punctuation == ":" || punctuation == "!" || punctuation == "?" {
-                interval += 1.5
-            } else if word.contains("\n") {
                 interval += 2
+            } else if punctuation == "." || punctuation == ";" || punctuation == ":" || punctuation == "!" || punctuation == "?" {
+                interval += 3
+            } else if word.contains("\n") {
+                interval += 10
             }
 
             if word.filter({ $0 == "\n" }).count > 1 {
-                interval += 2
+                interval += 10
             }
 
             let syllableCount = countSyllables(in: String(word))
@@ -128,7 +281,7 @@ class ContentViewModel: ObservableObject {
             interval = 0.5
         }
 
-        interval /= speedMultiplier
+        interval /= settings.speedMultiplier
 
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [self] _ in
             if self.currentIndex < self.words.count - 1 && self.words.count > 0 {
@@ -180,13 +333,15 @@ class ContentViewModel: ObservableObject {
         return max(syllableCount, 1)
     }
 
+    #if os(iOS)
     func triggerHapticFeedback() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
     }
+    #endif
 
     func handleWordDisplayDragChanged(_ value: DragGesture.Value) {
-        if drawerIsPresented || value.startLocation.x <= 20 {
+        if drawerIsPresented || value.startLocation.x <= 20 || (abs(value.translation.width) < 10 && abs(value.translation.height) < 10) {
             return
         }
 
@@ -207,19 +362,48 @@ class ContentViewModel: ObservableObject {
 
             if newIndex != currentIndex {
                 currentIndex = newIndex
+                #if os(iOS)
                 triggerHapticFeedback() // Trigger haptic feedback on index change
+                #endif
             }
 
             initialDragPosition! += CGFloat(incrementCount) * -20
         }
     }
 
-    func handleWordDisplayDragEnded() {
-        initialDragPosition = nil
+    func handleWordDisplayDragEnded(_ value: DragGesture.Value) {
 
-        if temporaryPause {
-            temporaryPause = false
-            play()
+        if abs(value.translation.width) < 10 && abs(value.translation.height) < 10 {
+            if isPlaying {
+                pause()
+            } else {
+                play()
+            }
+        } else {
+            initialDragPosition = nil
+
+            if temporaryPause {
+                temporaryPause = false
+                play()
+            }
+        }
+    }
+
+    func scrollToCurrentWord() {
+        if let scrollViewProxy {
+            let totalWords = phraseText.split(separator: " ").count
+            guard totalWords > 0 else { return }
+
+            let progress = CGFloat(currentIndex) / CGFloat(totalWords)
+
+            // Adjust the scrollOffset to keep the current word in the center of the scrollView
+            let halfScrollViewHeight = scrollViewHeight / 2
+            let adjustedOffset = (progress * (scrollContentHeight + scrollViewHeight)) - halfScrollViewHeight
+
+            // Constrain the offset to ensure it doesn't scroll beyond the content bounds
+            let scrollOffset = max(0, adjustedOffset)
+
+            scrollViewProxy.scrollTo("textContent", anchor: UnitPoint(x: 0.5, y: scrollOffset / scrollContentHeight))
         }
     }
 
