@@ -17,6 +17,7 @@ struct InnerHeightPreferenceKey: PreferenceKey {
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: ContentViewModel
+    @State var wordDisplayIsPresented = true
 
     var body: some View {
         if #available(iOS 17.0, macOS 14.0, *) {
@@ -42,8 +43,10 @@ struct ContentView: View {
 
     var content: some View {
         VStack(spacing: 0) {
-            WordDisplayView()
-                .transition(.move(edge: .top))
+            if !wordDisplayIsPresented {
+                WordDisplayView()
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
             if !viewModel.isFullScreen && !viewModel.settingsSheetIsPresented {
                 VStack(spacing: 0) {
                     Divider()
@@ -59,6 +62,7 @@ struct ContentView: View {
                 .transition(.move(edge: .bottom))
             }
         }
+        .clipped()
         .safeAreaInset(edge: .top) {
             ToolbarView()
         }
@@ -79,6 +83,11 @@ struct ContentView: View {
         .onAppear {
             viewModel.focusedField = true
             viewModel.loadHistory()
+        }
+        .onChange(of: viewModel.focusedField) { newValue in
+            withAnimation {
+                wordDisplayIsPresented = newValue
+            }
         }
     }
 }

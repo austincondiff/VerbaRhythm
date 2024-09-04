@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct WordDisplayView: View {
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+
     @EnvironmentObject var viewModel: ContentViewModel
     @EnvironmentObject var settings: SettingsViewModel
 
@@ -111,7 +113,7 @@ struct WordDisplayView: View {
             .padding()
             Spacer()
         }
-        .padding(.bottom, viewModel.settingsSheetIsPresented ? viewModel.sheetHeight : 0)
+        .padding(.bottom, viewModel.settingsSheetIsPresented && verticalSizeClass != .compact ? viewModel.sheetHeight : 0)
         .mask(fadeMask())
         .contentShape(Rectangle())
         .overlay {
