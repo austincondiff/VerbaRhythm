@@ -17,4 +17,4 @@ VerbaRythm is an app written in SwiftUI that helps speed readers or those with s
 
 - iOS
 - iPadOS (comming soon)
-- macOS (comming soon)
+- macOS
