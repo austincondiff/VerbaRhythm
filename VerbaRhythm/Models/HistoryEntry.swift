@@ -11,4 +11,5 @@ struct HistoryEntry: Identifiable, Hashable, Codable, Equatable {
     let id: UUID
     var text: String
     var timestamp: Date
+    var pinned: Bool?
 }

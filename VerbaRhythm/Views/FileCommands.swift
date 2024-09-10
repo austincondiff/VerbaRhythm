@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-struct FileCommands: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+struct FileCommands: Commands {
+    @ObservedObject var viewModel: ContentViewModel
 
-#Preview {
-    FileCommands()
+    var body: some Commands {
+        CommandGroup(replacing: .newItem) {
+            Button("New Entry", action: viewModel.addNewEntry)
+                .keyboardShortcut("N", modifiers: .command)
+        }
+    }
 }

@@ -16,6 +16,7 @@ struct SettingsForm: View {
     var body: some View {
         Form {
             Group {
+#if !os(macOS)
                 Section {
                     EmptyView()
                 } footer: {
@@ -39,6 +40,7 @@ struct SettingsForm: View {
                             }
                         }
                 }
+#endif
 
                 // Access SettingsViewModel directly
                 Section {
@@ -125,8 +127,10 @@ struct SettingsForm: View {
                             .multilineTextAlignment(.center)
                     }
                 } footer: {
+                    #if !os(macOS)
                     Color.clear
                         .padding(.bottom)
+                    #endif
                 }
             }
             #if os(iOS)
@@ -134,6 +138,7 @@ struct SettingsForm: View {
             #endif
             .labelStyle(.titleOnly)
         }
+#if !os(macOS)
         .ignoresSafeArea()
         .safeAreaInset(edge: .top, spacing: 0) {
             VStack(spacing: 0) {
@@ -172,6 +177,7 @@ struct SettingsForm: View {
             }
             .background(.thickMaterial.opacity(scrolledToTop ? 0 : 1))
         }
+#endif
         .confirmationDialog(
             "Reset All Settings",
             isPresented: $viewModel.settingsResetConfirmationIsPresented,

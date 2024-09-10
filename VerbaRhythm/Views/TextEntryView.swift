@@ -26,21 +26,23 @@ struct TextEntryView: View {
 //            Divider()
 
             GeometryReader { proxy in
+#if os(macOS)
+                TextEditorWithInsets(text: $viewModel.phraseText, insets: CGSize(width: 24, height: 24), currentWordIndex: viewModel.currentIndex, viewModel: viewModel)
+                    .focused($isFieldFocused, equals: true)
+                    .frame(height: proxy.size.height)
+//                    .padding(24)
+                    .font(.body)
+                    .background(Color(.textBackgroundColor))
+#else
                 ScrollViewReader { scrollViewProxy in
                     ScrollView {
                         VStack {
-#if os(macOS)
-                            placeholder
-                                .overlay {
-                                    textEditor
-                                }
-#else
+
                             placeholder
                                 .background {
                                     textEditor
                                         .padding(.vertical, -8)
                                 }
-#endif
                         }
                         .id("textContent")
                         .background(
@@ -67,16 +69,17 @@ struct TextEntryView: View {
                         viewModel.scrollViewHeight = proxy.size.height
                     }
                 }
+#endif
             }
         }
         .onChange(of: isFieldFocused) { newValue in
-            isFieldFocused = viewModel.focusedField
-            print("self changed: \(newValue)")
+            if newValue != viewModel.focusedField {
+                viewModel.focusedField = newValue
+            }
         }
         .onChange(of: viewModel.focusedField) { newValue in
             if newValue != isFieldFocused {
                 isFieldFocused = newValue
-                print("vm changed: \(newValue)")
             }
         }
         .onChange(of: cursorPosition) { newPosition in
@@ -89,7 +92,7 @@ struct TextEntryView: View {
             }
         }
     }
-
+#if !os(macOS)
     var textEditor: some View {
         TextEditorWithCursor(text: $viewModel.phraseText, cursorPosition: $cursorPosition)
             .focused($isFieldFocused, equals: true)
@@ -118,80 +121,46 @@ struct TextEntryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding()
     }
-
+#endif
     var highlightedPlaceholder: some View {
         var result = Text("")
-        let regex = try! NSRegularExpression(pattern: "[ \t\n—]+", options: [])
 
+        let parsedWords = viewModel.parseWords(from: viewModel.phraseText)
         var wordIndex = 0
-        var currentPosition = 0
 
-        let fullText = viewModel.phraseText as NSString
-        let matches = regex.matches(in: viewModel.phraseText, options: [], range: NSRange(location: 0, length: fullText.length))
-
-        for match in matches {
-            let range = NSRange(location: currentPosition, length: match.range.location - currentPosition)
-            let word = fullText.substring(with: range)
-            let separator = fullText.substring(with: match.range)
-
-            if !word.isEmpty {
-                let highlightedWord = Text(word)
+        for parsedWord in parsedWords {
+            if !parsedWord.isSeparator {
+                let highlightedWord = Text(parsedWord.word)
                     .foregroundColor(viewModel.currentIndex == wordIndex ? Color.accentColor : Color.primary)
                 result = result + highlightedWord
                 wordIndex += 1
+            } else {
+                result = result + Text(parsedWord.word)
             }
-
-            result = result + Text(separator)
-            currentPosition = match.range.location + match.range.length
-        }
-
-        // Append the remaining text after the last separator
-        let remainingRange = NSRange(location: currentPosition, length: fullText.length - currentPosition)
-        if remainingRange.length > 0 {
-            let remainingText = fullText.substring(with: remainingRange)
-            let highlightedWord = Text(remainingText)
-                .foregroundColor(viewModel.currentIndex == wordIndex ? Color.accentColor : Color.primary)
-
-            result = result + highlightedWord
         }
 
         return result
     }
 
     private func updateCurrentWord(at position: Int) {
-        let regex = try! NSRegularExpression(pattern: "[ \t\n—]+", options: [])
-        let fullText = viewModel.phraseText as NSString
-
+        let parsedWords = viewModel.parseWords(from: viewModel.phraseText)
         var currentCharacterCount = 0
         var wordIndex = 0
 
-        let matches = regex.matches(in: viewModel.phraseText, options: [], range: NSRange(location: 0, length: fullText.length))
+        for parsedWord in parsedWords {
+            let wordLength = parsedWord.word.count
 
-        for match in matches {
-            let range = NSRange(location: currentCharacterCount, length: match.range.location - currentCharacterCount)
-
-            // If cursor is in between a set of matched characters do not change word
-            if position > match.range.location && position < match.range.location + match.range.length {
-                return
+            if !parsedWord.isSeparator {
+                if position <= currentCharacterCount + wordLength {
+                    viewModel.currentIndex = wordIndex
+                    return
+                }
+                wordIndex += 1
             }
-
-            if position < match.range.location {
-                viewModel.currentIndex = wordIndex
-                return
-            } else if position == match.range.location {
-                // Cursor is directly on a separator
-                viewModel.currentIndex = wordIndex
-                return
-            }
-
-            currentCharacterCount = match.range.location + match.range.length
-            wordIndex += 1
+            currentCharacterCount += wordLength
         }
 
-        // If the cursor is beyond the last separator, set to the last word
-        if wordIndex < viewModel.words.count {
-            viewModel.currentIndex = wordIndex
-        }
+        viewModel.currentIndex = wordIndex
     }
 
     private func updateCursorPosition(for wordIndex: Int) {
@@ -218,77 +187,208 @@ struct TextEntryView: View {
 }
 
 #if os(macOS)
-struct TextEditorWithCursor: NSViewRepresentable {
+struct TextEditorWithInsets: NSViewRepresentable {
     @Binding var text: String
-    @Binding var cursorPosition: Int
+    var insets: NSSize
+    var currentWordIndex: Int
+    var viewModel: ContentViewModel
 
-    func makeNSView(context: Context) -> NSScrollView {
-        let scrollView = NSScrollView()
-        let textView = NSTextView()
+    class Coordinator: NSObject, NSTextViewDelegate {
+        var parent: TextEditorWithInsets
+        var previousText: String
+        var isFocused: Bool = false
+        var externalUpdateInProgress = false
 
-        scrollView.hasVerticalScroller = true
-        scrollView.documentView = textView
+        init(_ parent: TextEditorWithInsets) {
+            self.parent = parent
+            self.previousText = parent.text
+        }
 
-        textView.delegate = context.coordinator
-        textView.font = NSFont.preferredFont(forTextStyle: .body)
-        textView.backgroundColor = .clear
+        func textDidChange(_ notification: Notification) {
+            if let textView = notification.object as? NSTextView {
+                let undoManager = textView.undoManager
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakStrategy = .pushOut
+                // Register undo
+                undoManager?.registerUndo(withTarget: self, handler: { target in
+                    target.performUndoRedo(textView)
+                })
 
-        let attributedString = NSMutableAttributedString(string: text)
-        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: text.count))
-        attributedString.addAttribute(.foregroundColor, value: NSColor.labelColor, range: NSRange(location: 0, length: text.count))
+                undoManager?.setActionName("Typing")
 
-        textView.textStorage?.setAttributedString(attributedString)
+                previousText = textView.string
+                parent.text = textView.string
 
-        return scrollView
-    }
+                // Ensure currentWordIndex is updated safely
+                if !externalUpdateInProgress && isFocused {
+                    updateCurrentWordIndex(for: textView.selectedRange().location, in: textView.string)
+                }
+            }
+        }
 
-    func updateNSView(_ nsView: NSScrollView, context: Context) {
-        guard let textView = nsView.documentView as? NSTextView else { return }
+        func textViewDidChangeSelection(_ notification: Notification) {
+            guard !externalUpdateInProgress else { return }
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakStrategy = .pushOut
+            if let textView = notification.object as? NSTextView, isFocused {
+                let cursorPosition = textView.selectedRange().location
+                updateCurrentWordIndex(for: cursorPosition, in: textView.string)
+            }
+        }
 
-        let attributedString = NSMutableAttributedString(string: text)
-        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: text.count))
-        attributedString.addAttribute(.foregroundColor, value: NSColor.labelColor, range: NSRange(location: 0, length: text.count))
+        private func updateCurrentWordIndex(for cursorPosition: Int, in text: String) {
+            let parsedWords = parent.viewModel.parseWords(from: text)
+            guard !parsedWords.isEmpty else {
+                parent.viewModel.currentIndex = 0
+                return
+            }
 
-        textView.textStorage?.setAttributedString(attributedString)
-        textView.font = NSFont.preferredFont(forTextStyle: .body)
+            var currentCharacterCount = 0
+            var wordIndex = 0
 
-        setCursorPosition(in: textView)
+            // Safeguard against out-of-range errors by ensuring we stay within bounds
+            for parsedWord in parsedWords {
+                let wordLength = parsedWord.word.count
+
+                if !parsedWord.isSeparator {
+                    if cursorPosition <= currentCharacterCount + wordLength {
+                        // Ensure wordIndex doesn't exceed the number of words
+                        parent.viewModel.currentIndex = min(wordIndex, parsedWords.count - 1)
+                        return
+                    }
+                    wordIndex += 1
+                }
+
+                // If the cursor is at the last separator, keep currentWordIndex at the last word
+                if parsedWord.isSeparator && cursorPosition == currentCharacterCount + wordLength {
+                    parent.viewModel.currentIndex = min(wordIndex - 1, parsedWords.count - 1)
+                    return
+                }
+
+                currentCharacterCount += wordLength
+            }
+
+            // If the cursor is at the end of the text and there are trailing separators, set to the last word
+            parent.viewModel.currentIndex = min(wordIndex - 1, parsedWords.count - 1)
+        }
+
+        func performUndoRedo(_ textView: NSTextView) {
+            let currentText = textView.string
+            textView.string = previousText
+            parent.text = previousText
+            previousText = currentText
+        }
     }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    private func setCursorPosition(in textView: NSTextView) {
-        let location = NSRange(location: cursorPosition, length: 0)
-        textView.setSelectedRange(location)
-        textView.scrollRangeToVisible(location)
+    class CustomTextView: NSTextView {
+        var onFocusChange: ((Bool) -> Void)?
+
+        override func becomeFirstResponder() -> Bool {
+            let becameFirstResponder = super.becomeFirstResponder()
+            if becameFirstResponder {
+                onFocusChange?(true)
+            }
+            return becameFirstResponder
+        }
+
+        override func resignFirstResponder() -> Bool {
+            let resignedFirstResponder = super.resignFirstResponder()
+            if resignedFirstResponder {
+                onFocusChange?(false)
+                clearSelection() // Clear the selection when focus is lost
+            }
+            return resignedFirstResponder
+        }
+
+        // Helper function to clear any selection or text state
+        private func clearSelection() {
+            if let selectedRange = selectedRanges.first as? NSRange, selectedRange.length > 0 {
+                setSelectedRange(NSRange(location: selectedRange.location, length: 0))
+            }
+        }
     }
 
-    class Coordinator: NSObject, NSTextViewDelegate {
-        var parent: TextEditorWithCursor
+    func makeNSView(context: Context) -> NSScrollView {
+        let textView = CustomTextView()
+        textView.isRichText = false
+        textView.isEditable = true
+        textView.isSelectable = true
+        textView.font = NSFont.systemFont(ofSize: 14)
+        textView.backgroundColor = .clear
+        textView.textContainerInset = insets
+        textView.delegate = context.coordinator
+        textView.allowsUndo = true
 
-        init(_ parent: TextEditorWithCursor) {
-            self.parent = parent
-        }
-
-        func textDidChange(_ notification: Notification) {
-            guard let textView = notification.object as? NSTextView else { return }
-            parent.text = textView.string
-        }
-
-        func textViewDidChangeSelection(_ notification: Notification) {
-            guard let textView = notification.object as? NSTextView else { return }
-            let selectedRange = textView.selectedRange()
-            if selectedRange.length == 0 {
-                parent.cursorPosition = selectedRange.location
+        textView.onFocusChange = { isFocused in
+            context.coordinator.isFocused = isFocused
+            if isFocused {
+                context.coordinator.externalUpdateInProgress = false
             }
+        }
+
+        let scrollView = NSScrollView()
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
+        scrollView.borderType = .noBorder
+        scrollView.documentView = textView
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+
+        textView.minSize = NSSize(width: 0, height: scrollView.contentSize.height)
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
+
+        return scrollView
+    }
+
+    func updateNSView(_ nsView: NSScrollView, context: Context) {
+        if let textView = nsView.documentView as? NSTextView {
+            // Update text content only if it changed externally
+            if textView.string != text {
+                context.coordinator.externalUpdateInProgress = true
+                textView.string = text
+                context.coordinator.externalUpdateInProgress = false
+
+                // Only update currentWordIndex if it's meaningful, such as when the text editor is not focused and
+                // currentIndex is out of bounds (e.g., due to text length changes)
+                let parsedWords = viewModel.parseWords(from: text)
+
+                if !context.coordinator.isFocused && (viewModel.currentIndex >= parsedWords.count) {
+                    viewModel.currentIndex = max(parsedWords.count - 1, 0) // Set to the last valid word, or 0 if empty
+                }
+            }
+
+            // Remove highlighting when focused
+            if context.coordinator.isFocused {
+                let fullRange = NSRange(location: 0, length: text.count)
+                textView.textStorage?.removeAttribute(.foregroundColor, range: fullRange)
+                textView.textStorage?.addAttribute(.foregroundColor, value: NSColor.labelColor, range: fullRange)
+            } else {
+                highlightCurrentWord(in: textView)
+            }
+        }
+    }
+
+    private func highlightCurrentWord(in textView: NSTextView) {
+        let parsedWords = viewModel.parseWords(from: text)
+        let fullRange = NSRange(location: 0, length: (text as NSString).length)
+        textView.textStorage?.removeAttribute(.foregroundColor, range: fullRange)
+        textView.textStorage?.addAttribute(.foregroundColor, value: NSColor.labelColor, range: fullRange)
+
+        var wordIndex = 0
+
+        for parsedWord in parsedWords {
+            guard !parsedWord.isSeparator else { continue }
+
+            let nsRange = NSRange(parsedWord.range, in: text)
+            if wordIndex == currentWordIndex {
+                textView.textStorage?.addAttribute(.foregroundColor, value: NSColor.controlAccentColor, range: nsRange)
+            }
+            wordIndex += 1
         }
     }
 }

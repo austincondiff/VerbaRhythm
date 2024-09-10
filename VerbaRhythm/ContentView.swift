@@ -14,14 +14,14 @@ struct InnerHeightPreferenceKey: PreferenceKey {
     }
 }
 
-
 struct ContentView: View {
     @EnvironmentObject var viewModel: ContentViewModel
     @State var wordDisplayIsPresented = true
 
     var body: some View {
-        if #available(iOS 17.0, macOS 14.0, *) {
+        if #available(iOS 17.0, *) {
             content
+#if !os(macOS)
                 .inspector(isPresented: $viewModel.settingsSheetIsPresented) {
                     SettingsForm()
                         .overlay {
@@ -33,6 +33,7 @@ struct ContentView: View {
                             viewModel.sheetHeight = newHeight
                         }
                 }
+#endif
         } else {
             content
                 .sheet(isPresented: $viewModel.settingsSheetIsPresented) {
@@ -41,36 +42,56 @@ struct ContentView: View {
         }
     }
 
+    var textEntry: some View {
+        VStack(spacing: 0) {
+            if wordDisplayIsPresented {
+                Divider()
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+            TextEntryView()
+                .clipped()
+#if !os(macOS)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if wordDisplayIsPresented {
+                        VStack(spacing: 0) {
+                            Divider()
+                            PlaybackControlsView()
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+#endif
+        }
+        .transition(.move(edge: .bottom))
+    }
+
     var content: some View {
         VStack(spacing: 0) {
-            if !wordDisplayIsPresented {
+            if wordDisplayIsPresented {
                 WordDisplayView()
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
+#if !os(macOS)
             if !viewModel.isFullScreen && !viewModel.settingsSheetIsPresented {
-                VStack(spacing: 0) {
-                    Divider()
-                    TextEntryView()
-                        .clipped()
-                        .safeAreaInset(edge: .bottom, spacing: 0) {
-                            VStack(spacing: 0) {
-                                Divider()
-                                PlaybackControlsView()
-                            }
-                        }
-                }
-                .transition(.move(edge: .bottom))
+                textEntry
             }
+#else
+            if !viewModel.isFullScreen {
+                textEntry
+            }
+#endif
         }
         .clipped()
+#if !os(macOS)
         .safeAreaInset(edge: .top) {
             ToolbarView()
         }
-        #if os(iOS)
         .sidePanel(isPresented: $viewModel.drawerIsPresented) {
             SidePanelView()
         }
-        #endif
+#else
+        .background(Color(.textBackgroundColor))
+#endif
         .onOpenURL { url in
             if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                components.scheme == "verbarhythm",
@@ -84,11 +105,22 @@ struct ContentView: View {
             viewModel.focusedField = true
             viewModel.loadHistory()
         }
-        .onChange(of: viewModel.focusedField) { newValue in
-            withAnimation {
-                wordDisplayIsPresented = newValue
+#if os(macOS)
+        .onAppear {
+            viewModel.addNewEntry()
+        }
+        .onChange(of: viewModel.selectedHistoryEntries) { newValue in
+            viewModel.history.removeAll { entry in
+                entry.text.isEmpty && !viewModel.selectedHistoryEntries.contains(where: { $0 == entry.id })
             }
         }
+#else
+        .onChange(of: viewModel.focusedField) { newValue in
+            withAnimation {
+                wordDisplayIsPresented = !newValue
+            }
+        }
+#endif
     }
 }
 

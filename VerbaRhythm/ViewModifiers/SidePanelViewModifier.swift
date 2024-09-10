@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if !os(macOS)
 struct SidePanelModifier<PanelContent: View>: ViewModifier {
     @Binding var isPresented: Bool
 
@@ -136,3 +137,4 @@ extension View {
         self.modifier(SidePanelModifier(isPresented: isPresented, panelContent: panelContent))
     }
 }
+#endif

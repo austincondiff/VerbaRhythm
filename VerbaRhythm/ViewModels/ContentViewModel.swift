@@ -145,7 +145,23 @@ class ContentViewModel: ObservableObject {
     @Published var history: [HistoryEntry] = []
 
     @Published var editingHistory: Bool = false
-    @Published var selectedHistoryEntries = Set<HistoryEntry>()
+    @Published var selectedHistoryEntries = Set<UUID>() {
+        didSet {
+#if os(macOS)
+            if let firstSelectedID = selectedHistoryEntries.first,
+               let selectedEntry = history.first(where: { $0.id == firstSelectedID }) {
+                phraseText = selectedEntry.text
+                currentIndex = 0
+            } else {
+                phraseText = "" // Default to empty if no match found
+            }
+
+            if isPlaying {
+                pause()
+            }
+#endif
+        }
+    }
     @Published var isFullScreen: Bool = false
     @Published var drawerIsPresented: Bool = false {
         didSet {
@@ -163,7 +179,7 @@ class ContentViewModel: ObservableObject {
     @Published var words: [String.SubSequence] = []
     @Published var lastSavedEntry: HistoryEntry? = nil
 
-    @Published var ghostWordCount: Int = 5;
+    @Published var ghostWordCount: Int = 20;
     @Published var showDeleteConfirmation = false
     @Published var deleteAction: DeleteAction? = nil
     @Published var scrollViewHeight: CGFloat = 0
@@ -171,10 +187,12 @@ class ContentViewModel: ObservableObject {
     @Published var scrollViewProxy: ScrollViewProxy? = nil
     @Published var settingsSheetIsPresented: Bool = false {
         didSet {
+            #if !os(macOS)
             if settingsSheetIsPresented {
                 drawerIsPresented = false
                 focusedField = false
             }
+            #endif
         }
     }
     @Published var sheetHeight: CGFloat = .zero
@@ -214,12 +232,72 @@ class ContentViewModel: ObservableObject {
     let speedOptions: [Double] = Array(stride(from: 0.25, through: 3.0, by: 0.25))
 
     func onPhraseTextChange() {
-        words = phraseText.split(separator: Regex(/[ \t\n—]/))
-        if words.count == 0 {
+        let parsedWords = parseWords(from: phraseText)
+
+        // Filter out the separators and keep only the words
+        words = parsedWords.filter { !$0.isSeparator }.map { $0.word[...]} // Preserves the SubSequence type
+
+        if words.isEmpty {
             currentIndex = 0
         } else if currentIndex > words.count - 1 {
             currentIndex = words.count - 1
         }
+
+        #if os(macOS)
+        if !selectedHistoryEntries.isEmpty {
+            if let selectedID = selectedHistoryEntries.first,
+               let historyIndex = history.firstIndex(where: { $0.id == selectedID }) {
+                var entry = history[historyIndex]
+                let now = Date()
+
+                // Update entry with new text and timestamp
+                entry.text = phraseText
+                entry.timestamp = now
+
+                // Only save the history if the text has changed
+                if history[historyIndex].text != entry.text {
+                    history[historyIndex] = entry
+                    saveHistory() // Save history, consider throttling for efficiency
+                }
+            }
+        }
+        #endif
+    }
+
+    func parseWords(from text: String) -> [(word: String, isSeparator: Bool, range: Range<String.Index>)] {
+        let regex = try! NSRegularExpression(pattern: "[ \t\n—]+", options: [])
+        let nsText = text as NSString
+        let matches = regex.matches(in: text, options: [], range: NSRange(location: 0, length: nsText.length))
+
+        var parsedWords: [(word: String, isSeparator: Bool, range: Range<String.Index>)] = []
+        var lastRangeEnd = text.startIndex
+
+        for match in matches {
+            let separatorRange = Range(match.range, in: text)!
+
+            // Add the word before the separator (if any)
+            if lastRangeEnd < separatorRange.lowerBound {
+                let wordRange = lastRangeEnd..<separatorRange.lowerBound
+                let word = String(text[wordRange])
+                parsedWords.append((word, false, wordRange))
+            }
+
+            // Add the separator itself
+            let separator = String(text[separatorRange])
+            parsedWords.append((separator, true, separatorRange))
+
+            // Move the last range end to after the separator
+            lastRangeEnd = separatorRange.upperBound
+        }
+
+        // Add any remaining word after the last separator
+        if lastRangeEnd < text.endIndex {
+            let wordRange = lastRangeEnd..<text.endIndex
+            let word = String(text[wordRange])
+            parsedWords.append((word, false, wordRange))
+        }
+
+        return parsedWords
     }
 
     func play() {
@@ -233,19 +311,36 @@ class ContentViewModel: ObservableObject {
         timer = nil
     }
 
+    func togglePlayback() {
+        if isPlaying {
+            pause()
+        } else {
+            focusedField = false
+            play()
+        }
+    }
+
     func prev() {
+        focusedField = false
+        if isPlaying { pause() }
         currentIndex = currentIndex - 1
     }
 
     func next() {
+        focusedField = false
+        if isPlaying { pause() }
         currentIndex = currentIndex + 1
     }
 
     func toBeginning() {
+        focusedField = false
+        if isPlaying { pause() }
         currentIndex = 0
     }
 
     func toEnd() {
+        focusedField = false
+        if isPlaying { pause() }
         currentIndex = words.count - 1
     }
 
@@ -259,28 +354,38 @@ class ContentViewModel: ObservableObject {
 
     func startTimer() {
         let word = words[currentIndex]
-        let punctuation = word.last
         var interval: Double = 0.15 * max(Double(word.count), 2)
 
         if settings.isDynamicSpeedOn {
-            if punctuation == "," {
-                interval += 2
-            } else if punctuation == "." || punctuation == ";" || punctuation == ":" || punctuation == "!" || punctuation == "?" {
-                interval += 3
-            } else if word.contains("\n") {
+            // Handle newlines as separate "words" with longer pauses
+            if word == "\n" {
                 interval += 10
+            } else {
+                let punctuation = word.last
+                if punctuation == "," {
+                    interval += 2
+                } else if punctuation == "." || punctuation == "?" || punctuation == "!" {
+                    interval += 6
+                } else if punctuation == ";" || punctuation == ":" {
+                    interval += 4
+                }
+
+                // Account for the space separating the word
+                interval += 0.5
+
+                // Syllable-based interval adjustment
+                let syllableCount = countSyllables(in: String(word))
+                interval = 0.18 * max(Double(syllableCount), interval)
             }
 
-            if word.filter({ $0 == "\n" }).count > 1 {
-                interval += 10
-            }
-
-            let syllableCount = countSyllables(in: String(word))
-            interval = 0.25 * max(Double(syllableCount), interval)
+            // Introduce small random variation for natural rhythm
+            let randomVariation = Double.random(in: -0.05...0.05) * interval
+            interval += randomVariation
         } else {
-            interval = 0.5
+            interval = 0.5 // Default fixed interval
         }
 
+        // Adjust for user-defined speed multiplier
         interval /= settings.speedMultiplier
 
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [self] _ in
@@ -333,12 +438,18 @@ class ContentViewModel: ObservableObject {
         return max(syllableCount, 1)
     }
 
-    #if os(iOS)
+#if os(iOS)
     func triggerHapticFeedback() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
     }
-    #endif
+#elseif os(macOS)
+    func triggerHapticFeedback() {
+        let hapticManager = NSHapticFeedbackManager.defaultPerformer
+        hapticManager.perform(.alignment, performanceTime: .now)
+    }
+#endif
+
 
     func handleWordDisplayDragChanged(_ value: DragGesture.Value) {
         if drawerIsPresented || value.startLocation.x <= 20 || (abs(value.translation.width) < 10 && abs(value.translation.height) < 10) {
@@ -362,9 +473,7 @@ class ContentViewModel: ObservableObject {
 
             if newIndex != currentIndex {
                 currentIndex = newIndex
-                #if os(iOS)
                 triggerHapticFeedback() // Trigger haptic feedback on index change
-                #endif
             }
 
             initialDragPosition! += CGFloat(incrementCount) * -20
@@ -386,6 +495,44 @@ class ContentViewModel: ObservableObject {
                 temporaryPause = false
                 play()
             }
+        }
+    }
+
+    func handleWordDisplayScrollChanged(_ translation: CGFloat) {
+        if drawerIsPresented || abs(translation) == 0 {
+            return
+        }
+
+        if !temporaryPause && isPlaying {
+            temporaryPause = true
+            pause()
+        }
+
+        if initialDragPosition == nil {
+            initialDragPosition = translation
+        }
+
+        let cumulativeDragDistance = translation - initialDragPosition!
+        let incrementCount = Int(-cumulativeDragDistance/20) // Adjust this factor for more or less sensitivity
+        print(translation/20)
+        let newIndex = max(0, min(words.count - 1, currentIndex + incrementCount))
+
+        if incrementCount != 0 {
+            if newIndex != currentIndex {
+                currentIndex = newIndex
+                triggerHapticFeedback()
+            }
+
+            initialDragPosition! += CGFloat(incrementCount) * -20
+        }
+    }
+
+    func handleWordDisplayScrollEnded(_ translation: CGFloat) {
+        initialDragPosition = nil
+
+        if temporaryPause {
+            temporaryPause = false
+            play()
         }
     }
 
@@ -446,20 +593,28 @@ class ContentViewModel: ObservableObject {
 
     var groupedHistory: [HistoryGroup: [HistoryEntry]] {
         var grouped: [HistoryGroup: [HistoryEntry]] = [:]
-
+        let calendar = Calendar.current
         let now = Date()
-        for entry in history {
-            let daysDifference = Calendar.current.dateComponents([.day], from: entry.timestamp, to: now).day ?? 0
 
+        for entry in history {
             let group: HistoryGroup
-            switch daysDifference {
-            case 0:
+
+            if entry.pinned == true {
+                group = .pinned
+            } else if calendar.isDateInToday(entry.timestamp) {
                 group = .today
-            case 1...7:
-                group = .last7Days
-            case 8...30:
-                group = .last30Days
-            default:
+            } else if calendar.isDateInYesterday(entry.timestamp) {
+                group = .yesterday
+            } else if let daysDifference = calendar.dateComponents([.day], from: entry.timestamp, to: now).day {
+                switch daysDifference {
+                case 1...7:
+                    group = .last7Days
+                case 8...30:
+                    group = .last30Days
+                default:
+                    group = .earlier
+                }
+            } else {
                 group = .earlier
             }
 
@@ -475,9 +630,23 @@ class ContentViewModel: ObservableObject {
 
     func deleteSelectedHistoryEntries() {
         history.removeAll { entry in
-            selectedHistoryEntries.contains(entry)
+            selectedHistoryEntries.contains(entry.id)
         }
         selectedHistoryEntries.removeAll()
+        saveHistory()
+    }
+
+    func deleteHistoryEntries(historyEntries: Set<UUID>) {
+        history.removeAll { entry in
+            historyEntries.contains(entry.id)
+        }
+
+        selectedHistoryEntries.subtract(historyEntries)
+
+        if selectedHistoryEntries.isEmpty, let firstEntry = history.first {
+            selectedHistoryEntries.insert(firstEntry.id)
+        }
+
         saveHistory()
     }
 
@@ -485,5 +654,22 @@ class ContentViewModel: ObservableObject {
         history.removeAll()
         selectedHistoryEntries.removeAll()
         saveHistory()
+    }
+
+    func addNewEntry() {
+        // Clear selection and create a new entry
+        selectedHistoryEntries.removeAll()
+
+        let now = Date()
+        let newEntry = HistoryEntry(id: UUID(), text: "", timestamp: now)
+
+        withAnimation {
+            history.append(newEntry)
+            selectedHistoryEntries.insert(newEntry.id)
+            isFullScreen = false
+        }
+
+        phraseText = newEntry.text // Set the phraseText to the new entry's text
+        focusedField = true
     }
 }

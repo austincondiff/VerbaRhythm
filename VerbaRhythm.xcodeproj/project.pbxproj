@@ -29,6 +29,10 @@
 		B68039232ABD4A22007DB065 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B68039222ABD4A22007DB065 /* Assets.xcassets */; };
 		B68039272ABD4A22007DB065 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B68039262ABD4A22007DB065 /* Preview Assets.xcassets */; };
 		B68FA70D2ABD509F0005F1DA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FA70C2ABD509F0005F1DA /* ContentView.swift */; };
+		B6F171CF2C8B57060032E9C6 /* SplitVStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F171CE2C8B57060032E9C6 /* SplitVStack.swift */; };
+		B6F171D12C8ED0C90032E9C6 /* NavigateCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F171D02C8ED0C90032E9C6 /* NavigateCommands.swift */; };
+		B6F171D32C8EDA1C0032E9C6 /* ViewCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F171D22C8EDA1C0032E9C6 /* ViewCommands.swift */; };
+		B6F171D52C8EDE180032E9C6 /* FileCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F171D42C8EDE180032E9C6 /* FileCommands.swift */; };
 		B6F94C6D2C7EBCAE00514CA8 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F94C6C2C7EBCAE00514CA8 /* SettingsForm.swift */; };
 		B6F94C6F2C7EBCE000514CA8 /* MoreMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F94C6E2C7EBCE000514CA8 /* MoreMenu.swift */; };
 		B6F94C712C7ED63200514CA8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F94C702C7ED63200514CA8 /* SettingsViewModel.swift */; };
@@ -94,6 +98,10 @@
 		B68039242ABD4A22007DB065 /* verbarhythm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = verbarhythm.entitlements; sourceTree = "<group>"; };
 		B68039262ABD4A22007DB065 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B68FA70C2ABD509F0005F1DA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B6F171CE2C8B57060032E9C6 /* SplitVStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitVStack.swift; sourceTree = "<group>"; };
+		B6F171D02C8ED0C90032E9C6 /* NavigateCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigateCommands.swift; sourceTree = "<group>"; };
+		B6F171D22C8EDA1C0032E9C6 /* ViewCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewCommands.swift; sourceTree = "<group>"; };
+		B6F171D42C8EDE180032E9C6 /* FileCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCommands.swift; sourceTree = "<group>"; };
 		B6F94C6C2C7EBCAE00514CA8 /* SettingsForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
 		B6F94C6E2C7EBCE000514CA8 /* MoreMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreMenu.swift; sourceTree = "<group>"; };
 		B6F94C702C7ED63200514CA8 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
@@ -174,6 +182,10 @@
 				B659B8292C72FCD30045D535 /* PlaybackControlsView.swift */,
 				B6F94C6C2C7EBCAE00514CA8 /* SettingsForm.swift */,
 				B6F94C6E2C7EBCE000514CA8 /* MoreMenu.swift */,
+				B6F171CE2C8B57060032E9C6 /* SplitVStack.swift */,
+				B6F171D02C8ED0C90032E9C6 /* NavigateCommands.swift */,
+				B6F171D22C8EDA1C0032E9C6 /* ViewCommands.swift */,
+				B6F171D42C8EDE180032E9C6 /* FileCommands.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -294,6 +306,8 @@
 				B659B8112C705E0E0045D535 /* PBXTargetDependency */,
 			);
 			name = VerbaRhythm;
+			packageProductDependencies = (
+			);
 			productName = verbarhythm;
 			productReference = B680391B2ABD4A21007DB065 /* VerbaRhythm.app */;
 			productType = "com.apple.product-type.application";
@@ -328,6 +342,8 @@
 				Base,
 			);
 			mainGroup = B68039122ABD4A21007DB065;
+			packageReferences = (
+			);
 			productRefGroup = B680391C2ABD4A21007DB065 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -391,12 +407,16 @@
 			files = (
 				B659B82A2C72FCD30045D535 /* PlaybackControlsView.swift in Sources */,
 				B6F94C6F2C7EBCE000514CA8 /* MoreMenu.swift in Sources */,
+				B6F171D32C8EDA1C0032E9C6 /* ViewCommands.swift in Sources */,
 				B659B8242C72F9B60045D535 /* TextEntryView.swift in Sources */,
 				B6F94C6D2C7EBCAE00514CA8 /* SettingsForm.swift in Sources */,
+				B6F171D12C8ED0C90032E9C6 /* NavigateCommands.swift in Sources */,
+				B6F171CF2C8B57060032E9C6 /* SplitVStack.swift in Sources */,
 				B659B81C2C72F6B50045D535 /* HistoryGroup.swift in Sources */,
 				B6F94C712C7ED63200514CA8 /* SettingsViewModel.swift in Sources */,
 				B659B8262C72F9D10045D535 /* ToolbarView.swift in Sources */,
 				B659B81A2C72F6960045D535 /* HistoryEntry.swift in Sources */,
+				B6F171D52C8EDE180032E9C6 /* FileCommands.swift in Sources */,
 				B659B8282C72FB9F0045D535 /* SidePanelView.swift in Sources */,
 				B659B8202C72F88A0045D535 /* ContentViewModel.swift in Sources */,
 				B68FA70D2ABD509F0005F1DA /* ContentView.swift in Sources */,

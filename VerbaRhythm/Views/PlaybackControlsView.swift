@@ -13,7 +13,6 @@ struct PlaybackControlsView: View {
     var body: some View {
         HStack {
             Button {
-                viewModel.pause()
                 viewModel.prev()
             } label: {
                 Label(title: {
@@ -93,7 +92,6 @@ struct PlaybackControlsView: View {
             }
 
             Button {
-                viewModel.pause()
                 viewModel.next()
             } label: {
                 Label(title: {
