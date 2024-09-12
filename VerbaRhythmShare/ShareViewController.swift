@@ -1,6 +1,6 @@
 //
 //  ShareViewController.swift
-//  VerbarhythmShare
+//  VerbaRhythmShare
 //
 //  Created by Austin Condiff on 8/13/24.
 //

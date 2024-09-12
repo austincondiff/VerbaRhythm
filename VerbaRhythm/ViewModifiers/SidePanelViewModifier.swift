@@ -1,6 +1,6 @@
 //
 //  SidePanelViewModifier.swift
-//  Verbarhythm
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 8/18/24.
 //

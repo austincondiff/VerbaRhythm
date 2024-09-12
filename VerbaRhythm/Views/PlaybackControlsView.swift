@@ -1,6 +1,6 @@
 //
 //  PlaybackControlsView.swift
-//  Verbarhythm
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 8/18/24.
 //
@@ -86,9 +86,9 @@ struct PlaybackControlsView: View {
                 }
                 .font(.system(size: 24))
                 .frame(height: 20)
-                #if os(iOS)
+#if os(iOS)
                 .foregroundStyle(viewModel.words.isEmpty ? Color(.quaternaryLabel) : viewModel.isPlaying ? Color(.tintColor) : Color(.white))
-                #endif
+#endif
             }
 
             Button {

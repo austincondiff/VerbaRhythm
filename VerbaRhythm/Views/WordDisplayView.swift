@@ -1,6 +1,6 @@
 //
 //  WordDisplayView.swift
-//  Verbarhythm
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 8/18/24.
 //
@@ -14,7 +14,7 @@ struct WordDisplayView: View {
     @EnvironmentObject var settings: SettingsViewModel
 
     var body: some View {
-        GeometryReader { outerGeo in // 1000
+        GeometryReader { outerGeo in
             let dynamicFontSize = max(
                 min(
                     (outerGeo.size.width / 30) * (settings.fontSize / 20),
@@ -158,14 +158,8 @@ struct WordDisplayView: View {
                                     viewModel.handleWordDisplayScrollEnded(accumulatedScroll)
                                     accumulatedScroll = 0
                                 } else if event.phase == .changed || event.phase == .mayBegin {
-                                    // we are changing scroll direction, set to deltaX
-                                    //                                if (deltaX > 0 && accumulatedScroll < 0) || (deltaX < 0 && accumulatedScroll > 0) {
-                                    //                                    accumulatedScroll = deltaX
-                                    //                                }
-
                                     accumulatedScroll += deltaX
 
-                                    // Reuse the scrub function for continuous scrubbing while scrolling
                                     viewModel.handleWordDisplayScrollChanged(accumulatedScroll)
                                 }
 

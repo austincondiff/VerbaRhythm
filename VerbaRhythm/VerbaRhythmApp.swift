@@ -1,6 +1,6 @@
 //
-//  VerbarhythmApp.swift
-//  Verbarhythm
+//  VerbaRhythmApp.swift
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 9/21/23.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct VerbarhythmApp: App {
+struct VerbaRhythmApp: App {
     @StateObject var settings: SettingsViewModel
     @StateObject var viewModel: ContentViewModel
 

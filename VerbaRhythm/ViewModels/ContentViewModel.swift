@@ -1,6 +1,6 @@
 //
 //  ContentViewModel.swift
-//  Verbarhythm
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 8/18/24.
 //
@@ -8,105 +8,6 @@
 
 import SwiftUI
 import Combine
-
-enum TextStyle: String, CaseIterable {
-    case sansSerif = "Sans Serif"
-    case serif = "Serif"
-    case monospaced = "Monospaced"
-    case rounded = "Rounded"
-
-    func toFont(size: CGFloat, weight: TextWeight, width: TextWidth) -> Font {
-        switch self {
-        case .sansSerif:
-            return .system(size: size, weight: weight.toFontWeight(), design: .default).width(width.toFontWidth())
-        case .serif:
-            return .system(size: size, weight: weight.toFontWeight(), design: .serif).width(width.toFontWidth())
-        case .monospaced:
-            return .system(size: size, weight: weight.toFontWeight(), design: .monospaced).width(width.toFontWidth())
-        case .rounded:
-            return .system(size: size, weight: weight.toFontWeight(), design: .rounded).width(width.toFontWidth())
-        }
-    }
-}
-
-enum TextSize: String, CaseIterable {
-    case xs = "Extra Small"
-    case sm = "Small"
-    case md = "Medium"
-    case lg = "Large"
-    case xl = "Extra Large"
-
-    func toSize() -> CGFloat {
-        switch self {
-        case .xs:
-            return 20
-        case .sm:
-            return 28
-        case .md:
-            return 34
-        case .lg:
-            return 40
-        case .xl:
-            return 48
-        }
-    }
-}
-
-enum TextWeight: String, CaseIterable {
-    case ultraLight = "Ultra Light"
-    case thin = "Thin"
-    case light = "Light"
-    case regular = "Regular"
-    case medium = "Medium"
-    case semibold = "Semibold"
-    case bold = "Bold"
-    case heavy = "Heavy"
-    case black = "Black"
-
-    func toFontWeight() -> Font.Weight {
-        switch self {
-        case .ultraLight:
-            return .ultraLight
-        case .thin:
-            return .thin
-        case .light:
-            return .light
-        case .regular:
-            return .regular
-        case .medium:
-            return .medium
-        case .semibold:
-            return .semibold
-        case .bold:
-            return .bold
-        case .heavy:
-            return .heavy
-        case .black:
-            return .black
-        }
-    }
-}
-
-enum TextWidth: String, CaseIterable {
-    case compressed = "Compressed"
-    case condensed = "Condensed"
-    case standard = "Standard"
-    case expanded = "Expanded"
-
-    func toFontWidth() -> Font.Width {
-        switch self {
-        case .compressed:
-            return .compressed
-        case .condensed:
-            return .condensed
-        case .standard:
-            return .standard
-        case .expanded:
-            return .expanded
-        }
-    }
-}
-
 
 class ContentViewModel: ObservableObject {
     @Published var focusedField: Bool = false {
@@ -142,7 +43,7 @@ class ContentViewModel: ObservableObject {
     @Published var currentWordSize: CGSize = CGSize(width: 0, height: 0)
     @Published var nextWordSize: CGSize = CGSize(width: 0, height: 0)
 
-    @Published var history: [HistoryEntry] = []
+    @Published var history: [Entry] = []
 
     @Published var editingHistory: Bool = false
     @Published var selectedHistoryEntries = Set<UUID>() {
@@ -177,7 +78,7 @@ class ContentViewModel: ObservableObject {
     }
     @Published var dragOffset: CGFloat = 0
     @Published var words: [String.SubSequence] = []
-    @Published var lastSavedEntry: HistoryEntry? = nil
+    @Published var lastSavedEntry: Entry? = nil
 
     @Published var ghostWordCount: Int = 20;
     @Published var showDeleteConfirmation = false
@@ -564,7 +465,7 @@ class ContentViewModel: ObservableObject {
     func loadHistory() {
         if let savedHistory = UserDefaults.standard.object(forKey: "history") as? Data {
             let decoder = JSONDecoder()
-            if let loadedHistory = try? decoder.decode([HistoryEntry].self, from: savedHistory) {
+            if let loadedHistory = try? decoder.decode([Entry].self, from: savedHistory) {
                 history = loadedHistory
                 lastSavedEntry = history.last
             }
@@ -585,19 +486,19 @@ class ContentViewModel: ObservableObject {
             }
         }
 
-        let newEntry = HistoryEntry(id: UUID(), text: currentText, timestamp: now)
+        let newEntry = Entry(id: UUID(), text: currentText, timestamp: now)
         history.append(newEntry)
         lastSavedEntry = newEntry
         saveHistory()
     }
 
-    var groupedHistory: [HistoryGroup: [HistoryEntry]] {
-        var grouped: [HistoryGroup: [HistoryEntry]] = [:]
+    var groupedHistory: [EntryGroup: [Entry]] {
+        var grouped: [EntryGroup: [Entry]] = [:]
         let calendar = Calendar.current
         let now = Date()
 
         for entry in history {
-            let group: HistoryGroup
+            let group: EntryGroup
 
             if entry.pinned == true {
                 group = .pinned
@@ -661,7 +562,7 @@ class ContentViewModel: ObservableObject {
         selectedHistoryEntries.removeAll()
 
         let now = Date()
-        let newEntry = HistoryEntry(id: UUID(), text: "", timestamp: now)
+        let newEntry = Entry(id: UUID(), text: "", timestamp: now)
 
         withAnimation {
             history.append(newEntry)

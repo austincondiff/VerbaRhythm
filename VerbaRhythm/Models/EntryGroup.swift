@@ -1,13 +1,13 @@
 //
-//  HistoryGroup.swift
-//  Verbarhythm
+//  EntryGroup.swift
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 8/18/24.
 //
 
 import Foundation
 
-enum HistoryGroup: String, CaseIterable {
+enum EntryGroup: String, CaseIterable {
     case pinned = "Pinned"
     case today = "Today"
     case yesterday = "Yesterday"

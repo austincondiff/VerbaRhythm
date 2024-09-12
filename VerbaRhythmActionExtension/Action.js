@@ -1,6 +1,6 @@
 //
 //  Action.js
-//  VerbarhythmActionExtension
+//  VerbaRhythmActionExtension
 //
 //  Created by Austin Condiff on 8/16/24.
 //

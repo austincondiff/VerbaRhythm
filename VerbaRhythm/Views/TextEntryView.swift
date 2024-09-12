@@ -1,6 +1,6 @@
 //
 //  TextEntryView.swift
-//  Verbarhythm
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 8/18/24.
 //
@@ -23,21 +23,17 @@ struct TextEntryView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-//            Divider()
-
             GeometryReader { proxy in
 #if os(macOS)
                 TextEditorWithInsets(text: $viewModel.phraseText, insets: CGSize(width: 24, height: 24), currentWordIndex: viewModel.currentIndex, viewModel: viewModel)
                     .focused($isFieldFocused, equals: true)
                     .frame(height: proxy.size.height)
-//                    .padding(24)
                     .font(.body)
                     .background(Color(.textBackgroundColor))
 #else
                 ScrollViewReader { scrollViewProxy in
                     ScrollView {
                         VStack {
-
                             placeholder
                                 .background {
                                     textEditor
@@ -387,6 +383,7 @@ struct TextEditorWithInsets: NSViewRepresentable {
             let nsRange = NSRange(parsedWord.range, in: text)
             if wordIndex == currentWordIndex {
                 textView.textStorage?.addAttribute(.foregroundColor, value: NSColor.controlAccentColor, range: nsRange)
+                textView.scrollRangeToVisible(nsRange)
             }
             wordIndex += 1
         }

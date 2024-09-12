@@ -1,18 +1,17 @@
 //
 //  SidePanelView.swift
-//  Verbarhythm
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 8/18/24.
 //
 
 import SwiftUI
-//import SwiftUIIntrospect
 
 struct SidePanelView: View {
     @EnvironmentObject var viewModel: ContentViewModel
     @State var searchText: String = ""
 
-    var filteredHistory: [HistoryEntry] {
+    var filteredHistory: [Entry] {
         if searchText.isEmpty {
             return viewModel.history
         } else {
@@ -36,7 +35,7 @@ struct SidePanelView: View {
             } else {
                 List(selection: $viewModel.selectedHistoryEntries) {
                     if searchText.isEmpty {
-                        ForEach(HistoryGroup.allCases, id: \.self) { group in
+                        ForEach(EntryGroup.allCases, id: \.self) { group in
                             if let entries = viewModel.groupedHistory[group], !entries.isEmpty {
                                 Section(header: HStack(spacing: 5) {
                                     if group == .pinned {
@@ -58,14 +57,6 @@ struct SidePanelView: View {
                         }
                     }
                 }
-//                .introspect(.table, on: .macOS(.v12, .v13, .v14, .v15)) { tableView in
-//                    print(type(of: tableView)) // NSTableView
-//                }
-//                .introspect(.table) { tableView in
-//                    tableView.focusRingType = .none  // Disable the focus ring
-//                    tableView.allowsSelection = true // Still allow selection
-//                    tableView.allowsFocus = false    // Disable focus completely
-//                }
                 .searchable(text: $searchText, placement: .sidebar)
                 .contextMenu(
                     forSelectionType: UUID.self,
@@ -100,8 +91,6 @@ struct SidePanelView: View {
                             EmptyView()
                         }
                     }
-//                    primaryAction: { selectedFiles in
-//                    }
                 )
 #if os(iOS)
                 .environment(\.editMode, .constant(viewModel.editingHistory ? .active : .inactive))
@@ -198,7 +187,7 @@ struct SidePanelView: View {
     }
 
     @ViewBuilder
-    private func historyEntryView(_ entry: HistoryEntry) -> some View {
+    private func historyEntryView(_ entry: Entry) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(entry.text == "" ? "New Entry" : entry.text)
                 .font(.body)

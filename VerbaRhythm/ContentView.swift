@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Verbarhythm
+//  VerbaRhythm
 //
 //  Created by Austin Condiff on 9/21/23.
 //
