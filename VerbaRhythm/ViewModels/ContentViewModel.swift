@@ -64,6 +64,7 @@ class ContentViewModel: ObservableObject {
         }
     }
     @Published var isFullScreen: Bool = false
+    @Published var columnVisibility: NavigationSplitViewVisibility = .all
     @Published var drawerIsPresented: Bool = false {
         didSet {
             print("ContentViewModel drawerIsPresented: \(drawerIsPresented)")
@@ -264,7 +265,7 @@ class ContentViewModel: ObservableObject {
             } else {
                 let punctuation = word.last
                 if punctuation == "," {
-                    interval += 2
+                    interval += 3
                 } else if punctuation == "." || punctuation == "?" || punctuation == "!" {
                     interval += 6
                 } else if punctuation == ";" || punctuation == ":" {

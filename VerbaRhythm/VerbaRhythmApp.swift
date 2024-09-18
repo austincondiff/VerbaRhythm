@@ -19,7 +19,7 @@ struct VerbaRhythmApp: App {
     }
 
     var window: some View {
-        NavigationSplitView(sidebar: {
+        NavigationSplitView(columnVisibility: $viewModel.columnVisibility, sidebar: {
             SidePanelView()
                 .environmentObject(viewModel)
                 .environmentObject(settings)
@@ -168,7 +168,7 @@ struct VerbaRhythmApp: App {
 #if os(macOS)
         .commands {
             FileCommands(viewModel: viewModel)
-            ViewCommands(settings: settings)
+            ViewCommands(viewModel: viewModel, settings: settings)
             NavigateCommands(viewModel: viewModel)
         }
 #endif
