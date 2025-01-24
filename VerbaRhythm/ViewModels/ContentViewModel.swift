@@ -8,7 +8,9 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 
+@MainActor
 class ContentViewModel: ObservableObject {
     @Published var focusedField: Bool = false {
         didSet {
@@ -67,10 +69,15 @@ class ContentViewModel: ObservableObject {
     @Published var columnVisibility: NavigationSplitViewVisibility = .all
     @Published var drawerIsPresented: Bool = false {
         didSet {
-            print("ContentViewModel drawerIsPresented: \(drawerIsPresented)")
             if drawerIsPresented {
                 focusedField = false
                 settingsSheetIsPresented = false
+            } else {
+#if os(iOS)
+                if (phraseText.isEmpty) {
+                    focusedField = true
+                }
+#endif
             }
             if isPlaying {
                 pause()
@@ -89,12 +96,12 @@ class ContentViewModel: ObservableObject {
     @Published var scrollViewProxy: ScrollViewProxy? = nil
     @Published var settingsSheetIsPresented: Bool = false {
         didSet {
-            #if !os(macOS)
+#if !os(macOS)
             if settingsSheetIsPresented {
                 drawerIsPresented = false
                 focusedField = false
             }
-            #endif
+#endif
         }
     }
     @Published var sheetHeight: CGFloat = .zero
@@ -106,11 +113,13 @@ class ContentViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     let settings: SettingsViewModel
+    private let entryManager: EntryManager
 
-    init(settings: SettingsViewModel = SettingsViewModel()) {
+    init(settings: SettingsViewModel = SettingsViewModel(), entryManager: EntryManager = .shared) {
         self.settings = settings
+        self.entryManager = entryManager
 
-        #if os(iOS)
+#if os(iOS)
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
             .sink { [weak self] _ in
                 self?.isKeyboardVisible = true
@@ -122,7 +131,7 @@ class ContentViewModel: ObservableObject {
                 self?.isKeyboardVisible = false
             }
             .store(in: &cancellables)
-        #endif
+#endif
     }
 
     var characterIndexForCurrentWord: Int {
@@ -145,7 +154,7 @@ class ContentViewModel: ObservableObject {
             currentIndex = words.count - 1
         }
 
-        #if os(macOS)
+#if os(macOS)
         if !selectedHistoryEntries.isEmpty {
             if let selectedID = selectedHistoryEntries.first,
                let historyIndex = history.firstIndex(where: { $0.id == selectedID }) {
@@ -163,7 +172,7 @@ class ContentViewModel: ObservableObject {
                 }
             }
         }
-        #endif
+#endif
     }
 
     func parseWords(from text: String) -> [(word: String, isSeparator: Bool, range: Range<String.Index>)] {
@@ -202,9 +211,32 @@ class ContentViewModel: ObservableObject {
         return parsedWords
     }
 
+    var parsedWords: [(word: String, isSeparator: Bool, range: Range<String.Index>)] {
+        parseWords(from: phraseText)
+    }
+
     func play() {
+        // Reset parsedWordIndex based on currentIndex when starting playback
+        parsedWordIndex = 0
+        // Find the correct parsedWordIndex that corresponds to currentIndex
+        var wordCount = 0
+        for (index, word) in parsedWords.enumerated() {
+            if !word.isSeparator {
+                if wordCount == currentIndex {
+                    parsedWordIndex = index
+                    break
+                }
+                wordCount += 1
+            }
+        }
+        
         isPlaying = true
-        startTimer()
+        
+        // Add initial delay before starting playback
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5/settings.speedMultiplier) { [weak self] in
+            guard let self = self, self.isPlaying else { return }
+            self.startTimer()
+        }
     }
 
     func pause() {
@@ -238,12 +270,18 @@ class ContentViewModel: ObservableObject {
         focusedField = false
         if isPlaying { pause() }
         currentIndex = 0
+        parsedWordIndex = 0  // Reset parsed index
     }
 
     func toEnd() {
         focusedField = false
         if isPlaying { pause() }
         currentIndex = words.count - 1
+        // Find the last non-separator word's index
+        parsedWordIndex = parsedWords.count - 1
+        while parsedWordIndex > 0 && parsedWords[parsedWordIndex].isSeparator {
+            parsedWordIndex -= 1
+        }
     }
 
     func atBeginning() -> Bool {
@@ -254,66 +292,149 @@ class ContentViewModel: ObservableObject {
         currentIndex == words.count - 1
     }
 
+    // Add this property to your view model or wherever you're tracking state
+    var parsedWordIndex = 0 // Tracks the index in parsedWords, including separators
+
     func startTimer() {
-        let word = words[currentIndex]
-        var interval: Double = 0.15 * max(Double(word.count), 2)
+        guard parsedWordIndex < parsedWords.count else {
+            // End playback if we reach the end of parsed words
+            isPlaying = false
+            timer?.invalidate()
+            timer = nil
+            return
+        }
+
+        let parsedWord = parsedWords[parsedWordIndex]
+        
+        // Check if this is the last non-separator word
+        let isLastWord = parsedWordIndex >= parsedWords.count - 1 || 
+                         !parsedWords.suffix(from: parsedWordIndex + 1).contains(where: { !$0.isSeparator })
+        
+        if isLastWord {
+            // Immediately end playback on last word without delay
+            parsedWordIndex = parsedWords.count
+            isPlaying = false
+            timer?.invalidate()
+            timer = nil
+            return
+        }
+
+        var interval: Double = 0
 
         if settings.isDynamicSpeedOn {
-            // Handle newlines as separate "words" with longer pauses
-            if word == "\n" {
-                interval += 10
+            if parsedWord.isSeparator {
+                // Handle separator cases with fixed intervals
+                if parsedWord.word == "\n" {
+                    interval = 10 // Longer pause for newlines
+                } else if parsedWord.word == "-" {
+                    interval = 3 // Pause for "-"
+                } else if parsedWord.word == "–" {
+                    interval = 4 // Pause for "–"
+                } else if parsedWord.word == "—" {
+                    interval = 6 // Pause for "—"
+                }
             } else {
-                let punctuation = word.last
-                if punctuation == "," {
-                    interval += 3
-                } else if punctuation == "." || punctuation == "?" || punctuation == "!" {
-                    interval += 6
-                } else if punctuation == ";" || punctuation == ":" {
-                    interval += 4
+                // Handle word cases with dynamic speed
+                interval = 0.15 * max(Double(parsedWord.word.count), 2) // Base interval for word length
+
+                // Handle punctuation at the end of a word
+                if let punctuation = parsedWord.word.last {
+                    if punctuation == "," {
+                        interval += 3
+                    } else if punctuation == "." || punctuation == "?" || punctuation == "!" {
+                        interval += 6
+                    } else if punctuation == ";" || punctuation == ":" {
+                        interval += 4
+                    }
                 }
 
-                // Account for the space separating the word
+                // Account for the space after the word
                 interval += 0.5
 
-                // Syllable-based interval adjustment
-                let syllableCount = countSyllables(in: String(word))
+                // Syllable-based interval adjustment (for words only)
+                let syllableCount = countSyllables(in: String(parsedWord.word))
                 interval = 0.18 * max(Double(syllableCount), interval)
-            }
 
-            // Introduce small random variation for natural rhythm
-            let randomVariation = Double.random(in: -0.05...0.05) * interval
-            interval += randomVariation
+                // Introduce small random variation for natural rhythm
+                let randomVariation = Double.random(in: -0.05...0.05) * interval
+                interval += randomVariation
+            }
         } else {
-            interval = 0.5 // Default fixed interval
+            // Fixed interval when dynamic speed is off
+            interval = 0.5
         }
 
         // Adjust for user-defined speed multiplier
         interval /= settings.speedMultiplier
 
+        // Schedule the next word or separator
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [self] _ in
-            if self.currentIndex < self.words.count - 1 && self.words.count > 0 {
+            // Increment parsedWordIndex to move to the next word or separator
+            parsedWordIndex += 1
+
+            // Increment currentIndex only for non-separator words
+            if parsedWordIndex < parsedWords.count, !parsedWords[parsedWordIndex].isSeparator {
                 currentIndex += 1
-                startTimer()
-            } else {
-                isPlaying = false
-                timer?.invalidate()
-                timer = nil
             }
+
+            startTimer()
         }
     }
 
     func getPreviousWords() -> String {
         guard currentIndex > 0 else { return "" }
-        let start = max(0, currentIndex - ghostWordCount)
-        let end = currentIndex - 1
-        return "\(words[start...end].joined(separator: " ")) "
+
+        // Find the corresponding range in parsedWords, excluding separators
+        var wordCount = 0
+        var start = 0
+        var end = 0
+
+        for (i, parsedWord) in parsedWords.enumerated() {
+            if !parsedWord.isSeparator {
+                if wordCount == max(0, currentIndex - ghostWordCount) {
+                    start = i
+                }
+                if wordCount == currentIndex - 1 {
+                    end = i
+                    break
+                }
+                wordCount += 1
+            }
+        }
+
+        // Ensure the next element after 'end' is a separator if it exists
+        let hasSeparatorAfterEnd = (end + 1 < parsedWords.count && parsedWords[end + 1].isSeparator)
+        let previousWords = parsedWords[start...(hasSeparatorAfterEnd ? end + 1 : end)].map { $0.word }.joined()
+
+        return previousWords
     }
 
     func getNextWords() -> String {
-        guard currentIndex < words.count - 1 else { return "" }
-        let start = currentIndex + 1
-        let end = min(words.count - 1, currentIndex + ghostWordCount)
-        return " \(words[start...end].joined(separator: " "))"
+        guard currentIndex < parsedWords.filter({ !$0.isSeparator }).count - 1 else { return "" }
+
+        // Find the corresponding range in parsedWords, excluding separators
+        var wordCount = 0
+        var start = 0
+        var end = 0
+
+        for (i, parsedWord) in parsedWords.enumerated() {
+            if !parsedWord.isSeparator {
+                if wordCount == currentIndex + 1 {
+                    start = i
+                }
+                if wordCount == min(currentIndex + ghostWordCount, parsedWords.filter({ !$0.isSeparator }).count - 1) {
+                    end = i
+                    break
+                }
+                wordCount += 1
+            }
+        }
+
+        // Ensure the previous element before 'start' is a separator if it exists
+        let hasSeparatorBeforeStart = (start - 1 >= 0 && parsedWords[start - 1].isSeparator)
+        let nextWords = parsedWords[(hasSeparatorBeforeStart ? start - 1 : start)...end].map { $0.word }.joined()
+
+        return nextWords
     }
 
     func countSyllables(in word: String) -> Int {
@@ -464,33 +585,21 @@ class ContentViewModel: ObservableObject {
     }
 
     func loadHistory() {
-        if let savedHistory = UserDefaults.standard.object(forKey: "history") as? Data {
-            let decoder = JSONDecoder()
-            if let loadedHistory = try? decoder.decode([Entry].self, from: savedHistory) {
-                history = loadedHistory
-                lastSavedEntry = history.last
-            }
+        Task {
+            history = await entryManager.fetchEntries()
         }
     }
 
     func saveHistoryEntry() {
         let currentText = phraseText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let now = Date()
-
-        if history.contains(where: { $0.text == currentText }) {
-            return
-        }
-
-        if let lastEntry = lastSavedEntry {
-            if Calendar.current.isDate(now, inSameDayAs: lastEntry.timestamp) && currentText == lastEntry.text {
-                return
+        
+        // Check if entry already exists
+        if !history.contains(where: { $0.text == currentText }) {
+            Task {
+                await entryManager.saveEntry(currentText)
+                await loadHistory() // Reload to get updated data
             }
         }
-
-        let newEntry = Entry(id: UUID(), text: currentText, timestamp: now)
-        history.append(newEntry)
-        lastSavedEntry = newEntry
-        saveHistory()
     }
 
     var groupedHistory: [EntryGroup: [Entry]] {
@@ -531,31 +640,42 @@ class ContentViewModel: ObservableObject {
     }
 
     func deleteSelectedHistoryEntries() {
-        history.removeAll { entry in
-            selectedHistoryEntries.contains(entry.id)
+        Task {
+            for id in selectedHistoryEntries {
+                if let entry = history.first(where: { $0.id == id }) {
+                    await entryManager.deleteEntry(entry)
+                }
+            }
+            selectedHistoryEntries.removeAll()
+            await loadHistory()
         }
-        selectedHistoryEntries.removeAll()
-        saveHistory()
     }
 
     func deleteHistoryEntries(historyEntries: Set<UUID>) {
-        history.removeAll { entry in
-            historyEntries.contains(entry.id)
+        Task {
+            for id in historyEntries {
+                if let entry = history.first(where: { $0.id == id }) {
+                    await entryManager.deleteEntry(entry)
+                }
+            }
+            selectedHistoryEntries.subtract(historyEntries)
+            
+            await loadHistory()
+            
+            if selectedHistoryEntries.isEmpty, let firstEntry = history.first {
+                selectedHistoryEntries.insert(firstEntry.id)
+            }
         }
-
-        selectedHistoryEntries.subtract(historyEntries)
-
-        if selectedHistoryEntries.isEmpty, let firstEntry = history.first {
-            selectedHistoryEntries.insert(firstEntry.id)
-        }
-
-        saveHistory()
     }
 
     func deleteAllHistoryEntries() {
-        history.removeAll()
-        selectedHistoryEntries.removeAll()
-        saveHistory()
+        Task {
+            for entry in history {
+                await entryManager.deleteEntry(entry)
+            }
+            history.removeAll()
+            selectedHistoryEntries.removeAll()
+        }
     }
 
     func addNewEntry() {
@@ -565,13 +685,19 @@ class ContentViewModel: ObservableObject {
         let now = Date()
         let newEntry = Entry(id: UUID(), text: "", timestamp: now)
 
-        withAnimation {
-            history.append(newEntry)
-            selectedHistoryEntries.insert(newEntry.id)
-            isFullScreen = false
-        }
+        Task {
+            await entryManager.saveEntry("")
+            await loadHistory()
+            
+            withAnimation {
+                if let entry = history.first(where: { $0.text.isEmpty }) {
+                    selectedHistoryEntries.insert(entry.id)
+                    isFullScreen = false
+                }
+            }
 
-        phraseText = newEntry.text // Set the phraseText to the new entry's text
-        focusedField = true
+            phraseText = "" // Set the phraseText to empty
+            focusedField = true
+        }
     }
 }

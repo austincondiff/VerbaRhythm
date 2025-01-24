@@ -138,39 +138,10 @@ struct VerbaRhythmApp: App {
 
     var body: some Scene {
         WindowGroup {
-#if os(macOS)
-            if #available(macOS 14.0, *) {
-                window
-                    .inspector(isPresented: $viewModel.settingsSheetIsPresented) {
-                        SettingsForm()
-                            .environmentObject(viewModel)
-                            .environmentObject(settings)
-                            .toolbar {
-                                ToolbarItem(id: "inspector", placement: .automatic) {
-                                    Button {
-                                        viewModel.settingsSheetIsPresented.toggle()
-                                    } label: {
-                                        Label("Inspector", systemImage: "sidebar.right")
-                                            .labelStyle(.iconOnly)
-                                    }
-                                }
-                            }
-                    }
-            } else {
-                window
-            }
-#else
             ContentView()
                 .environmentObject(viewModel)
                 .environmentObject(settings)
-#endif
         }
-#if os(macOS)
-        .commands {
-            FileCommands(viewModel: viewModel)
-            ViewCommands(viewModel: viewModel, settings: settings)
-            NavigateCommands(viewModel: viewModel)
-        }
-#endif
+        .modelContainer(for: Entry.self)
     }
 }

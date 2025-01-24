@@ -26,14 +26,14 @@ struct ToolbarView: View {
 
             Spacer()
 
-            if !viewModel.phraseText.isEmpty {
+            if !viewModel.phraseText.isEmpty && !viewModel.focusedField {
                 Button {
                     viewModel.focusedField = false
                     if viewModel.isKeyboardVisible {
                         // Wait for the keyboard to dismiss before toggling full screen
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak viewModel] in
                             withAnimation {
-                                viewModel.isFullScreen.toggle()
+                                viewModel?.isFullScreen.toggle()
                             }
                         }
                     } else {
@@ -54,7 +54,9 @@ struct ToolbarView: View {
 //                .disabled(viewModel.focusedField)
             }
 
-            MoreMenu()
+            if !viewModel.focusedField {
+                MoreMenu()
+            }
 
             if viewModel.focusedField {
                 Button {
@@ -65,6 +67,7 @@ struct ToolbarView: View {
                         .font(.system(size: 17, weight: .semibold))
                 }
                 .help("Done")
+                .disabled(viewModel.phraseText.isEmpty)
             }
         }
         .labelStyle(.iconOnly)

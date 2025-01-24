@@ -25,11 +25,12 @@ struct MoreMenu: View {
 
             Divider()
 
-            Button(role: .destructive) {
+            Button {
                 viewModel.phraseText = ""
                 viewModel.focusedField = true
+                viewModel.isFullScreen = false
             } label: {
-                Label("Clear All Text", systemImage: "delete.left.fill")
+                Label("New Entry", systemImage: "square.and.pencil")
             }
 
             Divider()

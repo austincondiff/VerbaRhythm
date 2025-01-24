@@ -1,0 +1,5 @@
+// Entry Entity
+id: UUID
+text: String
+timestamp: Date
+pinned: Boolean 

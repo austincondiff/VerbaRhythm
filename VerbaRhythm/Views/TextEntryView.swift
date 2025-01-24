@@ -362,16 +362,16 @@ struct TextEditorWithInsets: UIViewRepresentable {
         var wordIndex = 0
 
         for parsedWord in parsedWords {
-            guard !parsedWord.isSeparator else { continue }
-
             let nsRange = NSRange(parsedWord.range, in: text)
-            if wordIndex == currentWordIndex {
+            if wordIndex == currentWordIndex && !parsedWord.isSeparator {
                 attributedString.addAttribute(.foregroundColor, value: UIColor.systemBlue, range: nsRange)
                 textView.scrollRangeToVisible(nsRange)
             } else {
                 attributedString.addAttribute(.foregroundColor, value: UIColor.label, range: nsRange)
             }
-            wordIndex += 1
+            if !parsedWord.isSeparator {
+                wordIndex += 1
+            }
         }
 
         textView.attributedText = attributedString
