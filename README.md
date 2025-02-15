@@ -13,8 +13,20 @@ VerbaRythm is an app written in SwiftUI that helps speed readers or those with s
 - Scrub through words by dragging finger over word display back and forth
 - Keep and manage history of entered text to return to previous entries
 
+## Technologies Used
+
+- SwiftUI
+- AppKit/UIKit
+- SwiftData
+- Gesture Recognition
+- Haptics
+
 ## Supported Platforms
 
 - iOS
 - iPadOS (comming soon)
 - macOS
+
+## License
+
+See the [LICENSE](LICENSE) file for details.
